@@ -19,11 +19,11 @@
 
 ## 🦦 수다리 입양하기
 
-| 내 컴퓨터 | 바로 다운로드 · v2.0.1 |
+| 내 컴퓨터 | 바로 다운로드 · v3.0.0 |
 | :--- | :--- |
-| **Windows 10 / 11** · x64 | [설치형 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Setup.exe) · [무설치 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Portable.exe) |
-| **Mac · Apple Silicon** (M 시리즈) | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-arm64.dmg) |
-| **Mac · Intel** | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-x64.dmg) |
+| **Windows 10 / 11** · x64 | [설치형 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-Setup.exe) · [무설치 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-Portable.exe) |
+| **Mac · Apple Silicon** (M 시리즈) | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-mac-arm64.dmg) |
+| **Mac · Intel** | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-mac-x64.dmg) |
 
 ### 🧭 내 컴퓨터는 어떤 파일을 받으면 되나요?
 
@@ -31,10 +31,10 @@
 
 | 내 컴퓨터 / 사용 방식 | 릴리즈에서 고를 파일 | 이렇게 사용해요 |
 | :--- | :--- | :--- |
-| Windows 10·11, Intel 또는 AMD **x64** PC | **Sudari-2.0.1-Setup.exe** ⭐ 추천 | 실행하고 설치 안내를 따라가세요. |
-| 같은 Windows PC에서 설치 없이 실행하고 싶어요 | **Sudari-2.0.1-Portable.exe** | 원하는 폴더에 저장한 뒤 실행하세요. 별도 설치 과정이 없어요. |
-| **Apple M 시리즈** MacBook·iMac·Mac mini·Mac Studio 등 | **Sudari-2.0.1-mac-arm64.dmg** | 열어서 Sudari를 응용 프로그램 폴더로 끌어 놓으세요. |
-| **Intel** 프로세서가 들어간 Mac | **Sudari-2.0.1-mac-x64.dmg** | 열어서 Sudari를 응용 프로그램 폴더로 끌어 놓으세요. |
+| Windows 10·11, Intel 또는 AMD **x64** PC | **Sudari-3.0.0-Setup.exe** ⭐ 추천 | 실행하고 설치 안내를 따라가세요. |
+| 같은 Windows PC에서 설치 없이 실행하고 싶어요 | **Sudari-3.0.0-Portable.exe** | 원하는 폴더에 저장한 뒤 실행하세요. 별도 설치 과정이 없어요. |
+| **Apple M 시리즈** MacBook·iMac·Mac mini·Mac Studio 등 | **Sudari-3.0.0-mac-arm64.dmg** | 열어서 Sudari를 응용 프로그램 폴더로 끌어 놓으세요. |
+| **Intel** 프로세서가 들어간 Mac | **Sudari-3.0.0-mac-x64.dmg** | 열어서 Sudari를 응용 프로그램 폴더로 끌어 놓으세요. |
 
 **Mac 칩 확인:** 왼쪽 위 ** → 이 Mac에 관하여**를 여세요. **칩: Apple M…**이라고 나오면 `mac-arm64`, **프로세서: Intel…**이라고 나오면 `mac-x64`를 받으면 돼요. MacBook Air·Pro라는 제품 이름만으로는 구분할 수 없어요. [Apple 확인 안내](https://support.apple.com/en-au/116943)
 
@@ -50,7 +50,7 @@ Mac은 **macOS 12 이상**을 지원해요. ZIP과 파일 확인용 SHA-256은 [
 
 **Windows:** 설치형 또는 무설치 파일을 실행해요. 코드 서명이 없는 개인 배포 앱이라 SmartScreen 안내가 뜰 수 있어요. 이 저장소에서 받은 파일인지 확인한 뒤 `추가 정보 → 실행`을 선택하세요.
 
-**Mac:** DMG를 열고 Sudari를 **응용 프로그램** 폴더로 끌어 놓아요. Apple 공증을 받지 않아 첫 실행이 막히면, 출처를 확인한 뒤 `시스템 설정 → 개인정보 보호 및 보안 → 그래도 열기`를 선택하세요.
+**Mac:** DMG를 열고 Sudari를 **응용 프로그램** 폴더로 끌어 놓아요. v3는 앱의 무결성 서명을 검사하지만 **Apple 공증은 없어 첫 실행이 차단될 수 있어요.** “손상됨”이 나오거나 실행이 막히면 [Mac 설치·해결 안내](docs/mac-install.ko.md)를 따라 주세요. 이전 v2.0.1 앱은 v3로 교체해 주세요.
 
 <details>
 <summary>⌨️ Mac에서 키보드·스크롤 반응 켜기</summary>
@@ -60,6 +60,8 @@ Mac은 **macOS 12 이상**을 지원해요. ZIP과 파일 확인용 SHA-256은 [
 </details>
 
 바탕화면 오른쪽 아래에서 만나요. **수달 우클릭** 또는 **트레이 / 메뉴바 아이콘**으로 설정과 종료 메뉴를 열 수 있어요.
+
+> 🍎 **3.0.0:** Mac 패키지의 서명 오류를 수정하고, 설치 파일에서 꺼낸 앱의 실행 검사를 추가했어요. 마우스 캡처가 끊긴 뒤 드래그가 꼬이는 문제도 수정하고, 두 OS에서 우클릭·타이핑·스크롤 이후의 드래그 검사를 확대했어요. [변경 내용](docs/releases/3.0.0.md)
 
 > 🫧 **2.0.1:** 메모·대사·조개가 가까이 모이고 겹치지 않아요. 집중·휴식 표시는 글자 길이에 맞춰 짧아졌어요. [수정 내용](docs/releases/2.0.1.md)
 

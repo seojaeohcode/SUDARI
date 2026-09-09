@@ -50,6 +50,8 @@ jobs:
         run: npm run test:smoke -- --force-device-scale-factor=1
       - name: Electron regression at Retina density
         run: npm run test:smoke -- --force-device-scale-factor=2
+      - name: Repeated dragging and pointer capture recovery
+        run: npx electron tools/smoke-interaction.js
       - name: Package for this CPU
         run: npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
         env:
@@ -105,6 +107,6 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           name: "SUDARI ${{ github.ref_name }} · A little otter, in your language 🦦"
-          body_path: docs/releases/2.0.1.md
+          body_path: docs/releases/3.0.0.md
           fail_on_unmatched_files: true
           files: release-assets/*

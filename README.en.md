@@ -16,11 +16,11 @@ It follows your cursor, kneads while you type, and keeps you company through one
 
 ## 🐚 Bring an otter home
 
-| Your computer | Download v2.0.1 |
+| Your computer | Download v3.0.0 |
 | :--- | :--- |
-| Windows 10 / 11 · x64 | [Installer](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Setup.exe) · [Portable](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Portable.exe) |
-| Mac · Apple Silicon (M series) | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-arm64.dmg) |
-| Mac · Intel | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-x64.dmg) |
+| Windows 10 / 11 · x64 | [Installer](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-Setup.exe) · [Portable](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-Portable.exe) |
+| Mac · Apple Silicon (M series) | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-mac-arm64.dmg) |
+| Mac · Intel | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v3.0.0/Sudari-3.0.0-mac-x64.dmg) |
 
 ### 🧭 Which file should I download?
 
@@ -28,10 +28,10 @@ It follows your cursor, kneads while you type, and keeps you company through one
 
 | Your computer / preference | File to choose under Assets | How to use it |
 | :--- | :--- | :--- |
-| Windows 10/11 PC with an Intel or AMD **x64** processor | **Sudari-2.0.1-Setup.exe** ⭐ Recommended | Run it and follow the installation steps. |
-| The same Windows PC, without an installation step | **Sudari-2.0.1-Portable.exe** | Save it in a folder and run it directly. |
-| MacBook, iMac, Mac mini, Mac Studio, etc. with an **Apple M-series** chip | **Sudari-2.0.1-mac-arm64.dmg** | Open it and drag Sudari into Applications. |
-| Mac with an **Intel** processor | **Sudari-2.0.1-mac-x64.dmg** | Open it and drag Sudari into Applications. |
+| Windows 10/11 PC with an Intel or AMD **x64** processor | **Sudari-3.0.0-Setup.exe** ⭐ Recommended | Run it and follow the installation steps. |
+| The same Windows PC, without an installation step | **Sudari-3.0.0-Portable.exe** | Save it in a folder and run it directly. |
+| MacBook, iMac, Mac mini, Mac Studio, etc. with an **Apple M-series** chip | **Sudari-3.0.0-mac-arm64.dmg** | Open it and drag Sudari into Applications. |
+| Mac with an **Intel** processor | **Sudari-3.0.0-mac-x64.dmg** | Open it and drag Sudari into Applications. |
 
 **Check your Mac:** open ** → About This Mac**. If it says **Chip: Apple M…**, choose `mac-arm64`. If it says **Processor: Intel…**, choose `mac-x64`. The name “MacBook Air” or “MacBook Pro” alone does not identify the chip. [Apple's guide](https://support.apple.com/en-au/116943)
 
@@ -47,7 +47,7 @@ macOS 12 or later. ZIP alternatives and SHA-256 checksums are on the [release pa
 
 **Windows:** run the installer or portable EXE. Builds are unsigned, so SmartScreen may ask for confirmation. Check that your download comes from this repository before choosing **More info → Run anyway**.
 
-**Mac:** open the DMG and drag Sudari into Applications. Builds are not Apple-notarized; if macOS blocks the first launch, use **System Settings → Privacy & Security → Open Anyway** after checking the source. Keyboard and scroll reactions need Accessibility / Input Monitoring permission. Choose **Enable keyboard & scroll reactions** (or its translation) in the menu bar, grant access, then restart Sudari. The other features work without these permissions.
+**Mac:** open the DMG and drag Sudari into Applications. v3 verifies the app’s ad-hoc integrity signature, but **it is not Apple-notarized and Gatekeeper can still block it**. For a “damaged” or blocked-app message, follow the [Mac installation guide](docs/mac-install.md). Replace the old v2.0.1 app with v3. Keyboard and scroll reactions need Accessibility / Input Monitoring permission. Choose **Enable keyboard & scroll reactions** (or its translation) in the menu bar, grant access, then restart Sudari. The other features work without these permissions.
 
 Right-click the otter or use its tray / menu-bar icon for settings, size, the timer and Quit.
 
@@ -67,6 +67,8 @@ Right-click the otter or use its tray / menu-bar icon for settings, size, the ti
 **Make it yours:** eight fur presets, a custom color picker, four patterns, sizes 2×–5×, your name in dialogue, a pinned note and optional reminders. Drag the otter to move it. Peek mode tucks it against the screen edge.
 
 <p align="center"><img src="docs/palette.png" width="900" alt="Eight fur colors, from brown and gold to pink and mint"></p>
+
+**New in 3.0.0:** repaired Mac bundle signatures and checks that launch the actual DMG/ZIP apps. Dragging now recovers from lost mouse capture, with expanded tests after menus, typing and scrolling on both platforms. [Release notes](docs/releases/3.0.0.md).
 
 **Fixed in 2.0.1:** notes, dialogue and the shell stay together without overlapping. Focus/break badges now fit their text. [Patch notes](docs/releases/2.0.1.md).
 

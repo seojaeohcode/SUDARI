@@ -127,12 +127,12 @@
 
     // 드래그 — 창을 잡아 옮기면서 모찌처럼 늘어난다. 단, 꼬리를 잡으면 화낸다.
     this.canvas.addEventListener('pointerdown', function (e) {
-      if (e.button === 2) return;
+      if (e.button !== 0) return;
       var bounds=s.canvas.getBoundingClientRect();
       if (s._isTail(e.clientX-bounds.left, e.clientY-bounds.top)) { s.tailPull(); return; }
       var p = s.bridge.petPos();
       var g = s.bridge.cursorGlobal();
-      s.drag = { gx: g.x - p.x, gy: g.y - p.y, moved: 0 };
+      s.drag = { gx: g.x - p.x, gy: g.y - p.y, moved: 0, pointerId: e.pointerId };
       s.shake = { flips: 0, lastDir: 0, t: 0 };
       s.fall.active = false;
       s.audio.squeak();
@@ -140,8 +140,9 @@
       try { s.canvas.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
     });
 
-    var release = function () {
+    var release = function (e) {
       if (!s.drag) return;
+      if (e && typeof e.pointerId === 'number' && e.pointerId !== s.drag.pointerId) return;
       s.drag = null;
       s.fall.active = true;
       s.fall.vy = 0;
@@ -149,9 +150,20 @@
     };
     this.canvas.addEventListener('pointerup', release);
     this.canvas.addEventListener('pointercancel', release);
+    // Native window moves, menus and focus changes can end capture without
+    // sending pointerup to this canvas. Never leave the next drag stuck.
+    this.canvas.addEventListener('lostpointercapture', release);
+    window.addEventListener('pointerup', release, true);
+    window.addEventListener('pointercancel', release, true);
+    window.addEventListener('blur', release);
+    window.addEventListener('pagehide', release);
+    window.addEventListener('pointermove', function (e) {
+      if (s.drag && !(e.buttons & 1)) release(e);
+    });
 
     this.canvas.addEventListener('contextmenu', function (e) {
       e.preventDefault();
+      release();
       s.bridge.contextMenu();
     });
 
