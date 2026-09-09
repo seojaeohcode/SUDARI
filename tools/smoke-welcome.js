@@ -56,7 +56,8 @@ app
       );
       await js('document.querySelector("[data-language=ja]").click()');
       assert.equal(await js("document.documentElement.lang"), "ja");
-      fs.mkdirSync(
+      await delay(100); // Let the language selection reach the compositor before capture.
+    fs.mkdirSync(
         path.join(
           __dirname,
           "../test-results",

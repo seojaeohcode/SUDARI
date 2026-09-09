@@ -14,7 +14,8 @@ fs.writeFileSync(path.join(profile, 'config.json'), JSON.stringify({
   scale: 2, language:'en', languageChosen:true, muted: true, launchAtLogin: false,
   ambient: { on: false }, affection: { on: false, everyMin: 40 }
 }));
-const output = path.join(__dirname, '..', 'test-results', `${process.platform}-${process.arch}`);
+const density = (process.argv.find(a=>a.startsWith('--force-device-scale-factor='))||'=1').split('=')[1];
+const output = path.join(__dirname, '..', 'test-results', `${process.platform}-${process.arch}`, 'dpr-'+density);
 fs.mkdirSync(output, { recursive: true });
 const errors = [];
 app.on('web-contents-created', (_event, contents) => {
