@@ -36,8 +36,16 @@ app.whenReady().then(async()=>{
   async function drag(label,during){
     const head=await grab(),before=win.getBounds();
     if(during)await during();
-    cursor={x:cursor.x-35,y:cursor.y-15};await wait(180);
-    assert.ok(win.getBounds().x<before.x-20,label+' can still be dragged');
+    cursor={x:cursor.x-35,y:cursor.y-15};
+    try {
+      await until(async()=>{
+        assert.equal(await js('!!sudariPet.drag'),true,label+' drag ended before mouse release');
+        return win.getBounds().x<before.x-20;
+      });
+    } catch(error) {
+      throw new Error(label+': '+error.message+' '+JSON.stringify({before,after:win.getBounds(),cursor,
+        renderer:await js('({drag:sudariPet.drag,cursor:sudariPet.cursor,position:sudariPet.bridge.petPos(),lastRelease:sudariPet._lastDragRelease})')}));
+    }
     win.webContents.sendInputEvent({type:'mouseUp',button:'left',clickCount:1,...head});
     await until(()=>js('!sudariPet.drag'));await wait(180);
   }

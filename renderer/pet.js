@@ -133,6 +133,7 @@
       var p = s.bridge.petPos();
       var g = s.bridge.cursorGlobal();
       s.drag = { gx: g.x - p.x, gy: g.y - p.y, moved: 0, pointerId: e.pointerId };
+      s._lastDragRelease = null;
       s.shake = { flips: 0, lastDir: 0, t: 0 };
       s.fall.active = false;
       s.audio.squeak();
@@ -143,6 +144,7 @@
     var release = function (e) {
       if (!s.drag) return;
       if (e && typeof e.pointerId === 'number' && e.pointerId !== s.drag.pointerId) return;
+      s._lastDragRelease = e ? e.type : 'contextmenu';
       s.drag = null;
       s.fall.active = true;
       s.fall.vy = 0;
