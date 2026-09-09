@@ -19,14 +19,14 @@ rx, ry = m["headR"]
 # 머리 + 어깨가 들어오는 정사각 영역 (눈은 런타임 렌더라 여기서 직접 찍는다)
 frame = sheet.crop((0, atlas["anims"]["idle"]["row"] * fh, fw, (atlas["anims"]["idle"]["row"] + 1) * fh)).copy()
 eye = (0x2a, 0x1a, 0x14, 255)
+w=max(2,round(m["eyeR"]*2)); h=w+1
 for ex, ey in m["eyes"]:
-    x0, y0 = round(ex - 1.5), round(ey - 2)
-    for dy in range(4):
-        for dx in range(3):
-            if (dx in (0, 2)) and (dy in (0, 3)):
-                continue
-            frame.putpixel((x0 + dx, y0 + dy), eye)
-    frame.putpixel((x0, y0 + 1), (255, 255, 255, 255))
+    x0,y0=round(ex-w/2),round(ey-h/2)
+    for dy in range(h):
+        for dx in range(w):
+            if dx in (0,w-1) and dy in (0,h-1): continue
+            frame.putpixel((x0+dx,y0+dy),eye)
+    frame.putpixel((x0,y0+1),(255,255,255,255))
 
 side = int(max(rx, ry) * 2 + 10)
 cx, cy = int(hx), int(hy) + 3

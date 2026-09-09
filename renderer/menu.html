@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:"
+    />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sudari</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="context-menu">
+    <header class="menu-head">
+      <img src="../assets/welcome.png" alt="" />
+      <div>
+        <b>Sudari</b>
+        <p data-i18n="welcome"></p>
+      </div>
+    </header>
+    <div id="quick" class="menu-quick"></div>
+    <div id="actions" class="menu-list"></div>
+    <div class="menu-row">
+      <span>↔ <span data-i18n="size"></span></span>
+      <div id="sizes"></div>
+    </div>
+    <label class="menu-row"
+      >🌐 <span data-i18n="language"></span
+      ><select id="menu-language"></select
+    ></label>
+    <footer class="menu-footer">
+      <button class="menu-settings" data-action="settings">
+        ⚙ <span data-i18n="settings"></span></button
+      ><button data-action="help">📖 <span data-i18n="help"></span></button
+      ><button data-action="quit">⏻ <span data-i18n="quit"></span></button>
+    </footer>
+    <script src="locales.js"></script>
+    <script src="i18n.js"></script>
+    <script src="preferences.js"></script>
+    <script src="preview-api.js"></script>
+    <script src="menu.js"></script>
+  </body>
+</html>

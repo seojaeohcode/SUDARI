@@ -26,7 +26,7 @@ KO = {
     "idle": "조개 쥐고 숨쉬기", "look": "두리번", "hunt": "마우스 사냥", "angry": "꼬리 잡히면 화남",
     "knead": "키보드 꾹꾹이", "overheat": "과열", "stretch": "스트레칭", "drink": "물 마시기",
     "shell": "조개 까기", "shell_open": "조개 깠다!", "jump": "완료 점프", "think": "함께 고민",
-    "sleep": "잠", "squish": "모찌 드래그", "wave": "인사", "float": "배영", "hold": "새우 먹기",
+    "sleep": "잠", "squish": "모찌 드래그", "wave": "인사", "float": "헤엄", "hold": "새우 먹기",
 }
 
 

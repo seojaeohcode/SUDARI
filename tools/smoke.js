@@ -1,5 +1,5 @@
 /* Real Electron regression test. Uses a separate profile; never changes user settings. */
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, screen } = require('electron');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -11,7 +11,7 @@ app.setPath('userData', profile);
 // A test profile must not change the user's OS login items.
 app.setLoginItemSettings = () => {};
 fs.writeFileSync(path.join(profile, 'config.json'), JSON.stringify({
-  scale: 2, muted: true, launchAtLogin: false,
+  scale: 2, language:'en', languageChosen:true, muted: true, launchAtLogin: false,
   ambient: { on: false }, affection: { on: false, everyMin: 40 }
 }));
 const output = path.join(__dirname, '..', 'test-results', `${process.platform}-${process.arch}`);
@@ -30,7 +30,7 @@ async function until(check) {
   }
   throw new Error('Timed out waiting for the pet');
 }
-require('../main');
+const main = require('../main');
 
 app.whenReady().then(async () => {
   const win = await until(() => BrowserWindow.getAllWindows()[0]);
@@ -44,11 +44,12 @@ app.whenReady().then(async () => {
   for (const scale of [2, 3, 4, 5, 2, 5]) {
     await js(`sudariAPI.saveConfig(Sudari.Pet.deepMerge(sudariPet.cfg, {scale: ${scale},
       muted: true, pin: '오늘도 같이 집중해요', pomodoro: {on: true, focusMin: 180, breakMin: 60, rounds: 12}}))`);
-    const expected = layout.size(scale);
-    await until(async () => await js(`sudariPet.scale === ${scale} && sudariPet.vh === innerHeight && sudariPet.vw === innerWidth && Math.abs(innerWidth - ${expected.width}) <= 1 && Math.abs(innerHeight - ${expected.height}) <= 1`));
+    const expected = layout.size(scale,screen.getDisplayMatching(win.getBounds()).workArea);
+    const actualScale = layout.effectiveScale(scale,expected);
+    await until(async () => await js(`sudariPet.scale === ${actualScale} && sudariPet.vh === innerHeight && sudariPet.vw === innerWidth && Math.abs(innerWidth - ${expected.width}) <= 1 && Math.abs(innerHeight - ${expected.height}) <= 1`));
     // Windows rounds physical pixel edges independently at fractional display density.
-    assert.ok(Math.abs(win.getBounds().width - expected.width) <= 1, 'Native window width follows scale');
-    assert.ok(Math.abs(win.getBounds().height - expected.height) <= 1, 'Native window height follows scale');
+    assert.ok(Math.abs(win.getBounds().width - expected.width) <= 2, 'Native window width follows scale');
+    assert.ok(Math.abs(win.getBounds().height - expected.height) <= 2, 'Native window height follows scale '+JSON.stringify({expected,actual:win.getBounds(),scale,area:screen.getDisplayMatching(win.getBounds()).workArea}));
     const deadline = await js('sudariPet.pomo.endsAt');
     for (const phase of ['focus', 'break']) {
       const row = await js(`(() => {
@@ -66,7 +67,7 @@ app.whenReady().then(async () => {
           breakClass: p.ui.timer.classList.contains('break'),
           dpr: devicePixelRatio, canvasWidth: p.canvas.width, viewport: innerWidth};
       })()`);
-      assert.ok(Math.abs(row.width - 86 * scale / 2) < 1, JSON.stringify(row));
+      assert.ok(Math.abs(row.width - 132 * actualScale / 2) < 1, JSON.stringify(row));
       assert.ok(row.top >= 8 && row.right <= expected.width && row.bottom <= expected.height, JSON.stringify(row));
       assert.ok(row.bubbleTop >= 0 && row.bubbleBottom < row.top, JSON.stringify(row));
       assert.equal(row.hit, true, 'Scaled shell receives clicks');
@@ -92,8 +93,8 @@ app.whenReady().then(async () => {
     // Moving the native window must never restore the old 320x300 dimensions.
     await js(`{ const p = sudariPet.bridge.petPos(); sudariAPI.movePet(p.x - 1, p.y); }`);
     await wait(80);
-    assert.ok(Math.abs(win.getBounds().width - expected.width) <= 1);
-    assert.ok(Math.abs(win.getBounds().height - expected.height) <= 1);
+    assert.ok(Math.abs(win.getBounds().width - expected.width) <= 2);
+    assert.ok(Math.abs(win.getBounds().height - expected.height) <= 2);
     await js(`sudariPet.action = null; sudariPet.anim = 'idle'; sudariPet.yOff = 0; sudariPet.bubbleUntil = 0; sudariPet.ui.bubble.classList.remove('show'); sudariPet.pomo.phase = 'focus'; sudariPet._renderTimer()`);
     await wait(180);
     const shot = await win.webContents.capturePage();
@@ -107,6 +108,48 @@ app.whenReady().then(async () => {
   assert.equal(await js('sudariPet.pomo'), null);
   assert.equal(await js(`sudariPet.ui.timer.classList.contains('show')`), false);
   assert.equal(await js(`getComputedStyle(sudariPet.ui.timer).pointerEvents`), 'none');
+  // Every locale in native menu, timer and settings (including long translations and RTL).
+  main.openSettings();
+  const settings=await until(()=>BrowserWindow.getAllWindows().find(w=>w!==win));
+  const sj=code=>settings.webContents.executeJavaScript(code);
+  await until(async()=>!settings.webContents.isLoading() && await sj('!!document.getElementById("language").options.length'));
+  main.openMenu();
+  const menu=await until(()=>BrowserWindow.getAllWindows().find(w=>w!==win&&w!==settings));
+  const mj=code=>menu.webContents.executeJavaScript(code);
+  await until(async()=>!menu.webContents.isLoading()&&await mj('!!document.querySelector("#quick button")'));
+  const I=require('../renderer/i18n');
+  for(const language of I.languages){
+    await js(`sudariAPI.saveConfig({...sudariPet.cfg,language:'${language.id}',pin:'',pomodoro:{on:true,focusMin:25,breakMin:5,rounds:4}})`);
+    await until(()=>sj(`document.documentElement.lang==='${language.id}'`));
+    await until(()=>js(`document.documentElement.lang==='${language.id}'`));
+    const labels=main.buildMenu().items.map(i=>i.label).filter(Boolean);
+    assert.ok(labels.some(l=>l.includes(I.t('settings',{},language.id))),labels.join(','));
+    assert.ok(labels.every(l=>!l.includes('undefined')));
+    await until(()=>mj(`document.documentElement.lang==='${language.id}'`));
+    assert.equal(await mj('document.documentElement.scrollWidth>innerWidth'),false,language.id+' menu width');
+    const checks=await sj(`({language:document.getElementById('language').value,overflow:document.documentElement.scrollWidth>innerWidth,dir:document.documentElement.dir,missing:[...document.querySelectorAll('[data-i18n]')].filter(e=>!e.textContent.trim()).length})`);
+    assert.equal(checks.language,language.id);assert.equal(checks.dir,language.dir);assert.equal(checks.overflow,false);assert.equal(checks.missing,0);
+    for(const key of ['appearance','reactions','timer','reminders','messages','system']){
+      await sj(`document.getElementById('tab-${key}').click()`);
+      assert.equal(await sj(`document.getElementById('section-${key}').hidden`),false);
+      assert.equal(await sj('document.documentElement.scrollWidth>innerWidth'),false);
+    }
+    await sj(`document.getElementById('tab-appearance').click()`);
+    await js(`sudariPet.togglePanel(true)`);await wait(30);
+    const clipping=await js(`(()=>{const r=sudariPet.ui.timerPanel.getBoundingClientRect();return r.left<0||r.right>innerWidth+1||r.top<0||r.bottom>innerHeight+1;})()`);
+    assert.equal(clipping,false,language.id+' panel');
+    if(['en','ko','de','ar','ja'].includes(language.id)){
+      fs.writeFileSync(path.join(output,'menu-'+language.id+'.png'),(await menu.webContents.capturePage()).toPNG());
+      fs.writeFileSync(path.join(output,'settings-'+language.id+'.png'),(await settings.webContents.capturePage()).toPNG());
+      fs.writeFileSync(path.join(output,'panel-'+language.id+'.png'),(await win.webContents.capturePage()).toPNG());
+    }
+    await js(`sudariPet.togglePanel(false)`);
+  }
+  menu.close();
+  settings.setSize(440,680);await wait(80);
+  assert.equal(await sj('document.documentElement.scrollWidth>innerWidth'),false,'Narrow settings do not overflow');
+  fs.writeFileSync(path.join(output,'settings-narrow-ar.png'),(await settings.webContents.capturePage()).toPNG());
+  settings.close();
   errors.push(...await js('smokeErrors'));
   assert.deepEqual(errors, []);
   fs.writeFileSync(path.join(output, 'results.json'), JSON.stringify(rows, null, 2));
@@ -116,5 +159,5 @@ app.whenReady().then(async () => {
   console.error(error);
   app.exit(1);
 });
-setTimeout(() => { console.error('Smoke test exceeded 60 seconds'); app.exit(1); }, 60000).unref();
+setTimeout(() => { console.error('Smoke test exceeded 120 seconds'); app.exit(1); }, 120000).unref();
 

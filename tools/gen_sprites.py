@@ -15,20 +15,20 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.normpath(os.path.join(HERE, "..", "assets"))
 os.makedirs(OUT, exist_ok=True)
 
-FW, FH = 72, 64        # 프레임 크기
-K = 1.3                # 포즈 좌표계(48x40 기준) → 프레임 픽셀 배율
+FW, FH = 88, 88        # 프레임 크기
+K = 1.6                # 포즈 좌표계(48x40 기준) → 프레임 픽셀 배율
 OX, OY = 5, 10         # 포즈 좌표계 원점 이동
 
 # ---------------------------------------------------------------- 팔레트
 # 런타임에서 정확한 RGB 치환으로 리컬러하므로 값이 서로 겹치면 안 된다.
 P = {
-    "OUT":      (0x3b, 0x24, 0x19, 255),   # 외곽선: 순검정 대신 어두운 따뜻한 갈색
-    "FUR_D":    (0x6b, 0x45, 0x30, 255),
-    "FUR":      (0x92, 0x5f, 0x3f, 255),   # 따뜻한 중간 갈색 (눈이 묻히지 않는 밝기)
-    "FUR_L":    (0xb0, 0x7f, 0x5a, 255),
-    "BELLY_D":  (0xd8, 0xc2, 0xa2, 255),
-    "BELLY":    (0xf0, 0xe2, 0xcc, 255),   # 주둥이·목·배 크림색 (따뜻하게)
-    "BELLY_L":  (0xfb, 0xf6, 0xec, 255),
+    "OUT":      (0x30, 0x26, 0x25, 255),   # 외곽선: 순검정 대신 어두운 따뜻한 갈색
+    "FUR_D":    (0x48, 0x39, 0x37, 255),
+    "FUR":      (0x62, 0x50, 0x4c, 255),   # 따뜻한 중간 갈색 (눈이 묻히지 않는 밝기)
+    "FUR_L":    (0x80, 0x6c, 0x64, 255),
+    "BELLY_D":  (0xc9, 0xc3, 0xb7, 255),
+    "BELLY":    (0xe8, 0xe5, 0xda, 255),   # 주둥이·목·배 크림색 (따뜻하게)
+    "BELLY_L":  (0xfa, 0xf8, 0xef, 255),
     "NOSE":     (0x35, 0x21, 0x1a, 255),
     "EYE":      (0x2a, 0x1a, 0x14, 255),   # 눈: 순검정 아님
     "GLINT":    (0xff, 0xff, 0xff, 255),
@@ -179,12 +179,12 @@ def blit_bitmap(b, rows, x0, y0, colors, flip_y=False, only_rows=None):
 
 # ---------------------------------------------------------------- 수달 리그
 DEF = dict(
-    headCx=24.0, headCy=15.5, headRx=10.8, headRy=9.2, headN=2.15,
-    bodyCx=24.0, bodyCy=30.5, bodyRx=9.8, bodyRy=9.0, bodyN=2.1,
+    headCx=24.0, headCy=15.5, headRx=11.7, headRy=8.0, headN=2.15,
+    bodyCx=24.0, bodyCy=30.5, bodyRx=8.7, bodyRy=9.0, bodyN=2.1,
     bellyCx=24.0, bellyCy=31.0, bellyRx=6.6, bellyRy=6.4, bib=True,
-    earR=2.4, earSpread=0.74, earLift=0.74,
+    earR=1.9, earSpread=0.88, earLift=0.62,
     # 눈/주둥이는 머리 중심 기준 상대좌표. 눈은 얼굴 중간보다 '아래', 멀리.
-    eyeSep=5.2, eyeDy=0.6, eyeR=1.5, pupilDx=0.0, pupilDy=0.0, lid=0.0,
+    eyeSep=6.0, eyeDy=0.6, eyeR=2.0, pupilDx=0.0, pupilDy=0.0, lid=0.0,
     muzzleDy=4.3, muzzleRx=None, muzzleRy=None,
     mouth=0.0, tongue=0.0, blush=0.0, whisk=True, brow=0.0,
     angry=False,                     # 눈썹 치켜올림 + 삐죽 입 + 볼 부풀리기
@@ -192,7 +192,7 @@ DEF = dict(
     # 기본 자세: 두 앞발을 가슴 앞에 모아 조개를 꼭 쥐고 있다 (held='clam')
     armLx=20.8, armLy=28.2, armRx=27.2, armRy=28.2, armR=2.3, arms=True, held="clam",
     footLx=19.0, footRx=29.0, footY=38.6, footW=5.4, footH=2.6, feet=True,
-    tail=[(32, 35), (38.5, 37), (44.5, 38.2)], tailW=5.6, tailTip=2.4, tailOn=True,
+    tail=[(32, 35), (38.5, 37), (44.5, 38.2)], tailW=5.6, tailTip=1.0, tailOn=True,
     headTiltX=0.0, headTiltY=0.0, pattern="plain",
 )
 
@@ -205,8 +205,8 @@ def draw_otter(**kw):
     hcx = p["headCx"] + p["headTiltX"]
     hcy = p["headCy"] + p["headTiltY"]
     hrx, hry = p["headRx"], p["headRy"]
-    mrx = p["muzzleRx"] if p["muzzleRx"] is not None else hrx * 0.43
-    mry = p["muzzleRy"] if p["muzzleRy"] is not None else hry * 0.32
+    mrx = p["muzzleRx"] if p["muzzleRx"] is not None else hrx * 0.69
+    mry = p["muzzleRy"] if p["muzzleRy"] is not None else hry * 0.43
     mcy = hcy + p["muzzleDy"]
 
     # 꼬리 (몸 뒤) — 어두운 아래 + 밝은 윗면
@@ -235,6 +235,11 @@ def draw_otter(**kw):
         sq(b, p["bellyCx"], p["bellyCy"] + 0.8, p["bellyRx"] * 0.6, p["bellyRy"] * 0.55,
            P["BELLY_L"], 2.0, clip=CREAM_SET)
 
+    # Small directional fur clusters model the smooth chest and haunch.
+    for dx, dy, w in ((-4,-2,2),(3,1,2),(-2,4,2),(1,-4,1)):
+        rect(b,p["bellyCx"]+dx,p["bellyCy"]+dy,w,.7,P["BELLY_D"],clip=CREAM_SET)
+    rect(b,p["bodyCx"]+p["bodyRx"]*.55,p["bodyCy"]+3,1.8,1,P["FUR_D"],clip=DARK_SET)
+
     # 배 위의 돌 — 조개를 내려칠 받침. 앞발·조개보다 먼저 그려서 뒤에 깔린다
     if p["rock"]:
         rx_, ry_ = p["bellyCx"] + 0.8, p["bellyCy"] + 0.4
@@ -262,6 +267,13 @@ def draw_otter(**kw):
     if p["bib"]:
         taper(b, [(hcx, mcy + mry * 0.6), (p["bellyCx"], p["bellyCy"] - p["bellyRy"] * 0.5)],
               mrx * 1.1, p["bellyRx"] * 1.0, P["BELLY"], clip=DARK_SET)
+
+    # Controlled cheek/chest clusters: smooth river-otter fur, no shaggy sea-otter ruff.
+    for side in (-1, 1):
+        rect(b, hcx + side * mrx * .74 - .6, mcy - 1, 1.7, 1, P["BELLY_L"], clip=CREAM_SET)
+        rect(b, hcx + side * mrx * .66 - .6, mcy + 1.4, 1.2, .8, P["BELLY_D"], clip=CREAM_SET)
+    rect(b, hcx - hrx * .55, hcy - hry * .55, 2, 1, P["FUR_L"], clip=DARK_SET)
+    rect(b, hcx - hrx * .35, hcy - hry * .67, 1, .6, P["BELLY_D"], clip=DARK_SET)
 
     # 손에 든 것 + 그것을 감싸 쥔 앞발.
     # 겹치는 부분마다 어두운 외곽선을 넣어 '앞에 있는 것'이 분명히 읽히게 한다 (픽셀아트 관례).
@@ -335,7 +347,7 @@ def draw_otter(**kw):
 
     # 코 — 작고 뭉툭 (3x2), 주둥이 윗부분
     nx, ny = int(b.X(hcx)), int(b.Y(mcy - mry * 0.45))
-    for dx in range(-1, 2):
+    for dx in range(-2, 3):
         b.put(nx + dx, ny, P["NOSE"])
         b.put(nx + dx, ny + 1, P["NOSE"])
     b.put(nx - 1, ny, P["FUR_L"])                         # 콧등 반사
@@ -364,14 +376,17 @@ def draw_otter(**kw):
     if p["whisk"]:
         bx = int(b.R(mrx)) + 1
         for s in (-1, 1):
-            for dy in (1, 3):
-                for i in range(3):
+            for dy in (0, 3, 6):
+                for i in range(7):
                     b.put(nx + s * (bx + i), ny + dy + (1 if (i == 2 and dy == 3) else 0),
                           P["BELLY_L"])
 
+    # A light one-pixel silhouette stays legible on both light and dark desktops.
+    outline(b, P["GLINT"])
+
     meta = {
         "eyes": eyes,
-        "eyeR": round(p["eyeR"], 2),
+        "eyeR": round(p["eyeR"] + 0.35, 2),
         "lid": round(p["lid"], 2),
         "head": [round(b.X(hcx), 1), round(b.Y(hcy), 1)],
         "headR": [round(b.R(hrx), 1), round(b.R(hry), 1)],
@@ -420,7 +435,7 @@ def anims(pattern):
     # angry — 꼬리 잡혔을 때: 눈썹 내려오고 볼 부풀리고 꼬리를 홱 치켜든다 (조개는 안 놓음)
     A["angry"] = [f(angry=True, lid=0.2, blush=0.4, headTiltX=w * 0.6, earLift=0.62, earSpread=0.9,
                     bodyCy=30.7, tail=[(32, 34.5), (37.5, 31.5 + w), (41.5, 27.5 + w * 1.5)],
-                    tailW=5.4, tailTip=2.6)
+                    tailW=5.4, tailTip=1.2)
                   for w in (0, 0.9, 0, -0.9)]
     # knead — 키보드 꾹꾹이
     A["knead"] = [f(armLy=30.5 - a, armRy=30.5 - b, armLx=17, armRx=31, headCy=16.0, mouth=0.12,
@@ -444,19 +459,12 @@ def anims(pattern):
     A["drink"] = [f(headCy=20 + d, bodyCy=31.5, bodyRy=8.4, lid=0.5, held=None,
                     mouth=0.5, tongue=0.5 + d * 0.4, muzzleDy=4.8,
                     armLx=17.8, armRx=30.2, armLy=33, armRy=33, pupilDy=0.6) for d in (0, 1.2, 2.0, 1.2)]
-    # shell — 배 위에 돌 놓고 조개 까기 (수달 시그니처, 배영 자세). 돌·조개는 프레임에 굽는다.
+    # A seated river otter plays with a shell between its paws.
     def shell_frames(held_kind):
-        out = []
-        for k in (0, 0.4, 1.0, 0.2, 0.7, 0):
-            out.append(f(
-                bodyCy=31.5, bodyRx=12.0, bodyRy=7.6, bodyN=2.0,
-                bellyCx=26, bellyCy=30.5, bellyRx=8.4, bellyRy=5.0, rock=True,
-                headCx=13.0, headCy=21.0, headRx=8.8, headRy=7.6, muzzleDy=3.6,
-                eyeDy=0.3, eyeSep=4.0, eyeR=1.3, lid=0.15, mouth=0.25 + 0.3 * k, held=held_kind,
-                armLx=23.5, armLy=27.6 - 3.2 * k, armRx=29.5, armRy=27.6 - 3.2 * k, armR=2.2,
-                footLx=37, footRx=42, footY=32.5, footW=5, footH=2.6,
-                tail=[(33, 36), (41, 37.2), (48.5, 37.6)], tailW=5.4, tailTip=2.4, earSpread=0.7))
-        return out
+        return [f(headCy=16 + k*.4, mouth=.2, held=held_kind,
+                  armLx=20.8, armRx=27.2, armLy=28-k*2, armRy=28-k*2,
+                  tail=[(32,35),(40,37),(47,38)], rock=False)
+                for k in (0,.4,1,.2,.7,0)]
     A["shell"] = shell_frames("clam")
     A["shell_open"] = shell_frames("clam_open")
     # jump — 완료 점프 (상승 궤적은 렌더러가 준다)
@@ -482,7 +490,7 @@ def anims(pattern):
             headCx=15.5, headCy=26.0 - 0.4 * k, headRx=8.8, headRy=7.6, muzzleDy=3.6,
             eyeDy=0.3, eyeSep=4.0, lid=1.0, earSpread=0.72, held=None,
             armLx=19.5, armLy=33, armRx=24.5, armRy=34, armR=2.1, feet=False,
-            tail=[(36, 31), (28, 28), (20, 30.5)], tailW=4.6, tailTip=2.4))
+            tail=[(36, 31), (28, 28), (20, 30.5)], tailW=4.6, tailTip=1.0))
     # squish — 모찌 드래그
     A["squish"] = []
     for k in (0.35, 0.7, 1.0):
@@ -498,18 +506,18 @@ def anims(pattern):
     # wave — 인사 (한 손엔 조개, 한 손은 흔들기)
     A["wave"] = [f(armLx=21.0, armLy=28.5, armRx=32 + dx, armRy=24 - dy, mouth=0.35, blush=0.5,
                    headTiltX=0.4, held=None) for dx, dy in ((0, 0), (1.5, 1.2), (0, 0), (-1.5, 1.2))]
-    # float — 배영 (물 위에 둥둥)
+    # Swimming on the belly: streamlined body and long tapered tail.
     A["float"] = []
     for k in (0, 0.5, 1.0, 0.5):
         A["float"].append(f(
             bodyCy=30.5 - 0.6 * k, bodyRx=12.2, bodyRy=7.0, bodyN=2.0,
-            bellyCx=26, bellyCy=29.5, bellyRx=8.6, bellyRy=4.6,
+            bellyCx=26, bellyCy=29.5, bellyRx=8.6, bellyRy=4.6, bib=False, held=None,
             headCx=12.5, headCy=21.5 - 0.6 * k, headRx=8.8, headRy=7.6, muzzleDy=3.6,
             eyeDy=0.3, eyeSep=4.0, lid=0.5, mouth=0.2, earSpread=0.7,
             armLx=21.5, armLy=27 - 0.5 * k, armRx=28.5, armRy=27 - 0.5 * k, armR=2.2,
             footLx=38, footRx=43, footY=31.5, footW=5, footH=2.6,
             # 꼬리는 물 위에 길게 뻗어 뒤로 (발 아래쪽으로)
-            tail=[(33, 35), (41, 36.2 + 0.3 * k), (48.5, 36.6 + 0.6 * k)], tailW=5.4, tailTip=2.4))
+            tail=[(33, 35), (41, 36.2 + 0.3 * k), (48.5, 36.6 + 0.6 * k)], tailW=5.4, tailTip=1.0))
     # hold — 서서 두 손으로 먹이 들기
     A["hold"] = []
     for k in (0, 1.0, 0.4, 0.8):
@@ -520,7 +528,7 @@ def anims(pattern):
             armLx=22.4, armLy=24.0 - 0.6 * k, armRx=25.6, armRy=24.0 - 0.6 * k, armR=2.3,
             mouth=0.1 + 0.25 * k, blush=0.5, held="shrimp",
             footLx=20.5, footRx=27.5, footY=39.0, footW=6, footH=2.6,
-            tail=[(29, 36.5), (37, 38.4), (45.5, 38.8)], tailW=5.4, tailTip=2.4))
+            tail=[(29, 36.5), (37, 38.4), (45.5, 38.8)], tailW=5.4, tailTip=1.0))
     return A
 
 

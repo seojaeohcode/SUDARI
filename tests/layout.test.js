@@ -4,7 +4,7 @@ const layout = require('../renderer/layout');
 
 test('resizing preserves the feet and horizontal center on an offset monitor', () => {
   const area = { x: -1920, y: -200, width: 1920, height: 1080 };
-  let previous = { x: -1100, y: 500, width: 320, height: 300 };
+  let previous = { x: -1100, y: 570, width: 320, height: 300 };
   for (const scale of [3, 4, 5, 2, 5, 2]) {
     const next = layout.bounds(previous, scale, area, false);
     assert.equal(next.y + next.height, previous.y + previous.height);
@@ -34,6 +34,6 @@ test('invalid saved scales cannot create NaN or unsupported window sizes', () =>
   for (const input of [undefined, 'oops', Infinity, NaN, -1, 0, 30, '4']) {
     const s = layout.scale(input);
     assert.ok(Number.isInteger(s) && s >= 2 && s <= 5);
-    assert.ok(layout.size(input).height <= 630);
+    assert.ok(layout.size(input).height <= 912);
   }
 });

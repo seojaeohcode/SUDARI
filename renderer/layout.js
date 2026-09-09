@@ -1,25 +1,56 @@
-/* Shared logical-pixel layout for Electron and the browser demo. */
+/* Integer pixel scales; the largest size fits inside the current display. */
 (function (root) {
-  'use strict';
-  function scale(value) {
-    var n = Number(value);
+  "use strict";
+  function scale(v) {
+    var n = Number(v);
     return Number.isFinite(n) ? Math.max(2, Math.min(5, Math.round(n))) : 2;
   }
-  function size(value) {
-    var s = scale(value);
-    // Sprite + FX, scaled shell, speech bubble and jumping headroom.
-    return { width: Math.max(320, 104 * s), height: 110 * s + 80 };
+  function desired(s) {
+    return { width: Math.max(360, 120 * s), height: 154 * s + 142 };
   }
-  function bounds(previous, value, area, peek) {
-    var s = scale(value), next = size(s);
-    var x = previous.x + (previous.width - next.width) / 2;
-    var y = previous.y + previous.height - next.height;
-    x = peek ? area.x + area.width - next.width / 2 + 12 * s
-      : Math.max(area.x, Math.min(x, area.x + area.width - next.width));
-    y = Math.max(area.y, Math.min(y, area.y + area.height - next.height + 2));
-    return { x: Math.round(x), y: Math.round(y), width: next.width, height: next.height };
+  function effectiveScale(v, area) {
+    var s = scale(v);
+    while (
+      s > 1 &&
+      (desired(s).height > area.height + 1 || desired(s).width > area.width + 1)
+    )
+      s--;
+    return s;
   }
-  var layout = { scale: scale, size: size, bounds: bounds };
-  if (typeof module === 'object' && module.exports) module.exports = layout;
-  else { root.Sudari = root.Sudari || {}; root.Sudari.layout = layout; }
-})(typeof window === 'object' ? window : globalThis);
+  function size(v, area) {
+    var d = desired(area ? effectiveScale(v, area) : scale(v));
+    return area
+      ? {
+          width: Math.min(d.width, area.width),
+          height: Math.min(d.height, area.height),
+        }
+      : d;
+  }
+  function bounds(previous, v, area, peek) {
+    var d = size(v, area),
+      s = effectiveScale(v, area);
+    var x = previous.x + (previous.width - d.width) / 2,
+      y = previous.y + previous.height - d.height;
+    x = peek
+      ? area.x + area.width - d.width / 2 + 12 * s
+      : Math.max(area.x, Math.min(x, area.x + area.width - d.width));
+    y = Math.max(area.y, Math.min(y, area.y + area.height - d.height));
+    return {
+      x: Math.round(x),
+      y: Math.round(y),
+      width: d.width,
+      height: d.height,
+    };
+  }
+  var api = {
+    scale: scale,
+    effectiveScale: effectiveScale,
+    size: size,
+    bounds: bounds,
+  };
+  if (typeof module === "object" && module.exports) module.exports = api;
+  else {
+    root.Sudari = root.Sudari || {};
+    root.Sudari.layout = api;
+  }
+})(typeof window === "object" ? window : globalThis);

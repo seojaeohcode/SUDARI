@@ -1,6 +1,6 @@
 {
   "name": "sudari",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "수다리 - 내 컴퓨터에 사는 픽셀 수달 (Sudari, a pixel otter that lives on your desktop)",
   "main": "main.js",
   "scripts": {
@@ -53,7 +53,8 @@
       "README.en.md",
       "CONTRIBUTING.md",
       "LICENSE",
-      "docs"
+      "docs",
+      "README.ko.md"
     ],
     "win": {
       "icon": "build/icon.ico",
@@ -73,11 +74,28 @@
       ]
     },
     "nsis": {
-      "oneClick": true,
+      "oneClick": false,
       "perMachine": false,
       "createDesktopShortcut": true,
-      "shortcutName": "수다리",
-      "artifactName": "Sudari-${version}-Setup.${ext}"
+      "shortcutName": "Sudari",
+      "artifactName": "Sudari-${version}-Setup.${ext}",
+      "displayLanguageSelector": true,
+      "language": "1033",
+      "installerLanguages": [
+        "en_US",
+        "ko_KR",
+        "ja_JP",
+        "zh_CN",
+        "zh_TW",
+        "es_ES",
+        "fr_FR",
+        "de_DE",
+        "pt_BR",
+        "it_IT",
+        "ru_RU",
+        "ar_SA"
+      ],
+      "include": "build/installer.nsh"
     },
     "portable": {
       "artifactName": "Sudari-${version}-Portable.${ext}"
@@ -107,7 +125,7 @@
       "artifactName": "Sudari-${version}-mac-${arch}.${ext}",
       "extendInfo": {
         "LSUIElement": true,
-        "NSAppleEventsUsageDescription": "수달이 옆에서 반응하기 위해 필요합니다."
+        "NSAppleEventsUsageDescription": "Sudari reacts to activity beside you."
       }
     },
     "dmg": {

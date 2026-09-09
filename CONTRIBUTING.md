@@ -34,6 +34,10 @@ Keep changes focused. For visual changes, include before/after images at 2× and
 
 Please discuss large new features in an issue first. Keep the pet quiet, local and easy to dismiss. Use original or appropriately licensed assets, and keep attribution with them. Contributions are distributed under the repository's Apache-2.0 license.
 
+## Translations
+
+Edit the 12-column source in `tools/build_i18n.py`, then run `python tools/build_i18n.py`. Keep interpolation tokens such as `{name}` and `{round}` unchanged. `npm test` checks that all languages contain the same keys and tokens. Test long text and right-to-left layout in the actual settings and timer. `renderer/locales.js` is generated; do not edit it directly.
+
 ## Releases
 
 Maintainers update `package.json`, the lockfile and release notes before tagging a version. A `v*` tag builds all three platform/CPU combinations, runs Electron smoke tests at 1× and 2× display density, checks packaged resources, and publishes all six binaries plus checksums only after every job succeeds.

@@ -1,234 +1,282 @@
-﻿/* 설정 창 — 입력을 바꾸면 즉시 저장되고 펫에 반영된다. 미리보기는 실제 스프라이트. */
+/* All settings save immediately and share one translated, validated configuration. */
 (function () {
-  'use strict';
-  var api = window.sudariAPI;
-  var S = window.Sudari;
-  var cfg = null;
-  var sprite = null;
-
-  var PRESETS = [
-    ['#925f3f', '강수달 (기본)'],
-    ['#6b4a3c', '진갈색수달'],
-    ['#4a3b36', '검은수달'],
-    ['#c48a52', '금빛수달'],
-    ['#8d8a86', '회색수달'],
-    ['#e6dccb', '흰수달'],
-    ['#d9a3ad', '분홍수달'],
-    ['#7fa6a3', '민트수달']
+  "use strict";
+  const S = window.Sudari,
+    I = S.i18n,
+    api = window.sudariAPI,
+    $ = (id) => document.getElementById(id);
+  let cfg,
+    sprite,
+    epoch = 0,
+    last = performance.now(),
+    frame = 0,
+    elapsed = 0;
+  const PRESETS = [
+    "#62504c",
+    "#925f3f",
+    "#4a3b36",
+    "#c48a52",
+    "#8d8a86",
+    "#e6dccb",
+    "#d9a3ad",
+    "#7fa6a3",
   ];
-
-  function $(id) { return document.getElementById(id); }
-
-  // ------------------------------------------------------------ 미리보기
-  var prev = { anim: 'idle', frame: 0, t: 0, gaze: [0, 0], lid: 0, next: 2 };
-
-  function loadSprite() {
-    return S.Sprite.load('../assets', cfg.pattern, window.SUDARI_ATLAS, window.SUDARI_PALETTE)
-      .then(function (s) {
-        sprite = s;
-        sprite.recolor(S.derivePalette(cfg.baseColor));
-      });
+  const bindings = {
+    name: "name",
+    pin: "pin",
+    language: "language",
+    baseColor: "baseColor",
+    pattern: "pattern",
+    scale: "scale",
+    volume: "volume",
+    muted: "muted",
+    sleepAfterMin: "sleepAfterMin",
+    launchAtLogin: "launchAtLogin",
+    peek: "peek",
+    "r-mouse": "reactions.mouse",
+    "r-keyboard": "reactions.keyboard",
+    "r-scroll": "reactions.scroll",
+    "r-pet": "reactions.pet",
+    "stretch-on": "stretch.on",
+    "stretch-min": "stretch.everyMin",
+    "water-on": "water.on",
+    "water-min": "water.everyMin",
+    "pomo-on": "pomodoro.on",
+    "pomo-focus": "pomodoro.focusMin",
+    "pomo-break": "pomodoro.breakMin",
+    "pomo-rounds": "pomodoro.rounds",
+    "meal-breakfast": "meals.breakfast",
+    "meal-lunch": "meals.lunch",
+    "meal-dinner": "meals.dinner",
+    "aff-on": "affection.on",
+    "aff-min": "affection.everyMin",
+    "ambient-on": "ambient.on",
+  };
+  function get(path) {
+    return path.split(".").reduce((o, k) => o[k], cfg);
   }
-
-  function drawPreview(dt) {
-    if (!sprite) return;
-    var c = $('prev'), ctx = c.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    ctx.clearRect(0, 0, c.width, c.height);
-    var a = sprite.anim(prev.anim);
-    prev.t += dt;
-    while (prev.t >= 1 / a.fps) { prev.t -= 1 / a.fps; prev.frame = (prev.frame + 1) % a.count; }
-    prev.next -= dt;
-    if (prev.next <= 0) { prev.lid = 1; prev.next = 2 + Math.random() * 3; }
-    else if (prev.next < 1.87) { prev.lid = 0; }
-
-    sprite.begin();
-    sprite.blitFrame(prev.anim, prev.frame);
-    sprite.drawEyes(prev.anim, prev.frame, { gaze: prev.gaze, lid: prev.lid });
-    var sc = 2;
-    sprite.present(ctx, (c.width - sprite.W * sc) / 2, c.height - sprite.H * sc + 15 * sc, sc, false);
+  function set(path, v) {
+    let keys = path.split("."),
+      key = keys.pop(),
+      o = keys.reduce((o, k) => o[k], cfg);
+    o[key] = v;
   }
-
-  var last = performance.now();
-  function loop() {
-    var t = performance.now();
-    drawPreview(Math.min(0.05, (t - last) / 1000));
-    last = t;
-    requestAnimationFrame(loop);
-  }
-
-  // ------------------------------------------------------------ 바인딩
-  function save(patch) {
-    cfg = Object.assign({}, cfg, patch || {});
+  function save() {
+    cfg = S.preferences.normalize(cfg);
     api.saveConfig(cfg);
   }
-
-  function bindText(id, get, set) {
-    var el = $(id);
-    el.value = get();
-    el.addEventListener('input', function () { set(el.value); });
+  async function load() {
+    const e = ++epoch,
+      s = await S.Sprite.load(
+        "../assets",
+        cfg.pattern,
+        SUDARI_ATLAS,
+        SUDARI_PALETTE,
+      );
+    if (e === epoch) {
+      sprite = s;
+      sprite.recolor(S.derivePalette(cfg.baseColor));
+    }
   }
-
-  function bindNum(id, get, set) {
-    var el = $(id);
-    el.value = get();
-    el.addEventListener('change', function () {
-      var v = parseFloat(el.value);
-      if (!isNaN(v)) set(v);
+  function buildTabs() {
+    const sections = [...document.querySelectorAll(".settings section")];
+    sections[0].classList.add("language-bar");
+    const nav = document.createElement("nav");
+    nav.className = "settings-tabs";
+    nav.setAttribute("role", "tablist");
+    sections[0].after(nav);
+    sections.slice(1).forEach((section, i) => {
+      const heading = section.querySelector("h2");
+      const key = heading.querySelector("[data-i18n]").dataset.i18n;
+      section.id = "section-" + key;
+      section.classList.add("settings-panel");
+      section.setAttribute("role", "tabpanel");
+      section.setAttribute("aria-labelledby", "tab-" + key);
+      section.hidden = i !== 0;
+      const button = document.createElement("button");
+      button.id = "tab-" + key;
+      button.className = "settings-tab";
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-controls", section.id);
+      button.setAttribute("aria-selected", String(i === 0));
+      button.innerHTML = heading.innerHTML;
+      button.onclick = () => {
+        nav
+          .querySelectorAll("button")
+          .forEach((b) =>
+            b.setAttribute("aria-selected", String(b === button)),
+          );
+        sections.slice(1).forEach((s) => (s.hidden = s !== section));
+      };
+      nav.appendChild(button);
     });
   }
-
-  function bindCheck(id, get, set) {
-    var el = $(id);
-    el.checked = !!get();
-    el.addEventListener('change', function () { set(el.checked); });
+  function option(select, value, label) {
+    let o = document.createElement("option");
+    o.value = value;
+    o.textContent = label;
+    select.appendChild(o);
   }
-
+  function translate() {
+    I.set(cfg.language);
+    I.apply();
+    document.title = I.t("settings") + " · Sudari";
+    $("pattern").replaceChildren();
+    ["plain", "spots", "stripes", "blaze"].forEach((k) =>
+      option($("pattern"), k, I.t(k)),
+    );
+    $("pattern").value = cfg.pattern;
+    renderSwatches();
+    renderReminders();
+  }
+  function sync() {
+    Object.entries(bindings).forEach(([id, path]) => {
+      const el = $(id);
+      if (document.activeElement === el) return;
+      if (el.type === "checkbox") el.checked = get(path);
+      else el.value = get(path);
+    });
+  }
   function renderSwatches() {
-    var box = $('swatches');
-    box.innerHTML = '';
-    PRESETS.forEach(function (p) {
-      var d = document.createElement('div');
-      d.className = 'sw' + (p[0].toLowerCase() === (cfg.baseColor || '').toLowerCase() ? ' on' : '');
-      d.style.background = p[0];
-      d.title = p[1];
-      d.addEventListener('click', function () {
-        cfg.baseColor = p[0];
-        $('baseColor').value = p[0];
-        save({ baseColor: p[0] });
-        sprite.recolor(S.derivePalette(p[0]));
+    $("swatches").replaceChildren();
+    PRESETS.forEach((color) => {
+      let b = document.createElement("button");
+      b.className = "sw" + (color === cfg.baseColor ? " on" : "");
+      b.style.background = color;
+      b.setAttribute("aria-label", I.t("color") + " " + color);
+      b.setAttribute("aria-pressed", String(color === cfg.baseColor));
+      b.onclick = () => {
+        cfg.baseColor = color;
+        save();
+        sync();
+        if (sprite) sprite.recolor(S.derivePalette(color));
         renderSwatches();
-      });
-      box.appendChild(d);
+      };
+      $("swatches").appendChild(b);
     });
   }
-
   function renderReminders() {
-    var box = $('reminders');
-    box.innerHTML = '';
-    (cfg.reminders || []).forEach(function (r, i) {
-      var row = document.createElement('div');
-      row.className = 'rem';
-      var t = document.createElement('input'); t.type = 'time'; t.value = r.time || '';
-      var m = document.createElement('input'); m.type = 'text'; m.value = r.msg || '';
-      var del = document.createElement('button'); del.textContent = '삭제';
-      t.addEventListener('change', function () { cfg.reminders[i].time = t.value; save(); });
-      m.addEventListener('input', function () { cfg.reminders[i].msg = m.value; save(); });
-      del.addEventListener('click', function () {
+    $("reminders").replaceChildren();
+    cfg.reminders.forEach((r, i) => {
+      let row = document.createElement("div");
+      row.className = "rem";
+      let time = document.createElement("input");
+      time.type = "time";
+      time.value = r.time;
+      time.setAttribute("aria-label", I.t("reminders"));
+      let msg = document.createElement("input");
+      msg.type = "text";
+      msg.value = r.msg;
+      msg.maxLength = 120;
+      msg.setAttribute("aria-label", I.t("reminderText"));
+      let del = document.createElement("button");
+      del.className = "ui-button";
+      del.textContent = "×";
+      del.setAttribute("aria-label", I.t("remove"));
+      time.onchange = () => {
+        cfg.reminders[i].time = time.value;
+        save();
+      };
+      msg.oninput = () => {
+        cfg.reminders[i].msg = msg.value;
+        save();
+      };
+      del.onclick = () => {
         cfg.reminders.splice(i, 1);
         save();
         renderReminders();
-      });
-      row.appendChild(t); row.appendChild(m); row.appendChild(del);
-      box.appendChild(row);
+      };
+      row.append(time, msg, del);
+      $("reminders").appendChild(row);
     });
+    $("rem-add").disabled = cfg.reminders.length >= 32;
   }
-
-  function bindAll() {
-    bindText('name', function () { return cfg.name || ''; }, function (v) { save({ name: v }); });
-    bindText('pin', function () { return cfg.pin || ''; }, function (v) { save({ pin: v }); });
-
-    var col = $('baseColor');
-    col.value = cfg.baseColor;
-    col.addEventListener('input', function () {
-      cfg.baseColor = col.value;
-      save({ baseColor: col.value });
-      if (sprite) sprite.recolor(S.derivePalette(col.value));
-      renderSwatches();
+  function loop(t) {
+    const dt = Math.min(0.05, (t - last) / 1000);
+    last = t;
+    if (sprite) {
+      let c = $("prev"),
+        ctx = c.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, c.width, c.height);
+      elapsed += dt;
+      let a = sprite.anim("idle");
+      if (elapsed > 1 / a.fps) {
+        elapsed = 0;
+        frame = (frame + 1) % a.count;
+      }
+      sprite.begin();
+      sprite.blitFrame("idle", frame);
+      sprite.drawEyes("idle", frame, {
+        gaze: [0, 0],
+        lid: t % 4100 > 3950 ? 1 : 0,
+      });
+      sprite.present(ctx, 0, 0, 2, false);
+    }
+    requestAnimationFrame(loop);
+  }
+  api.getConfig().then((c) => {
+    cfg = S.preferences.normalize(c);
+    I.languages.forEach((l) => option($("language"), l.id, l.name));
+    [2, 3, 4, 5].forEach((v) => option($("scale"), v, v + "×"));
+    buildTabs();
+    translate();
+    sync();
+    Object.entries(bindings).forEach(([id, path]) => {
+      const el = $(id);
+      el.addEventListener(
+        ["text", "range", "color"].includes(el.type) ? "input" : "change",
+        () => {
+          const before = cfg.pattern;
+          let v =
+            el.type === "checkbox"
+              ? el.checked
+              : ["number", "range"].includes(el.type) || id === "scale"
+                ? Number(el.value)
+                : el.value;
+          set(path, v);
+          if (id === "language") {
+            cfg.languageChosen = true;
+            translate();
+          }
+          save();
+          if (id === "baseColor") {
+            if (sprite) sprite.recolor(S.derivePalette(cfg.baseColor));
+            renderSwatches();
+          }
+          if (before !== cfg.pattern) load();
+          sync();
+        },
+      );
     });
-
-    var pat = $('pattern');
-    pat.value = cfg.pattern;
-    pat.addEventListener('change', function () {
-      cfg.pattern = pat.value;
-      save({ pattern: pat.value });
-      loadSprite();
-    });
-
-    var sc = $('scale');
-    sc.value = String(cfg.scale);
-    sc.addEventListener('change', function () { save({ scale: parseInt(sc.value, 10) }); });
-
-    bindCheck('r-mouse', function () { return cfg.reactions.mouse; },
-      function (v) { cfg.reactions.mouse = v; save(); });
-    bindCheck('r-keyboard', function () { return cfg.reactions.keyboard; },
-      function (v) { cfg.reactions.keyboard = v; save(); });
-    bindCheck('r-scroll', function () { return cfg.reactions.scroll; },
-      function (v) { cfg.reactions.scroll = v; save(); });
-    bindCheck('r-pet', function () { return cfg.reactions.pet; },
-      function (v) { cfg.reactions.pet = v; save(); });
-
-    var vol = $('volume');
-    vol.value = cfg.volume;
-    vol.addEventListener('input', function () { save({ volume: parseFloat(vol.value) }); });
-    bindCheck('muted', function () { return cfg.muted; }, function (v) { save({ muted: v }); });
-    bindNum('sleepAfterMin', function () { return cfg.sleepAfterMin; },
-      function (v) { save({ sleepAfterMin: v }); });
-
-    bindCheck('stretch-on', function () { return cfg.stretch.on; },
-      function (v) { cfg.stretch.on = v; save(); });
-    bindNum('stretch-min', function () { return cfg.stretch.everyMin; },
-      function (v) { cfg.stretch.everyMin = v; save(); });
-    bindCheck('water-on', function () { return cfg.water.on; },
-      function (v) { cfg.water.on = v; save(); });
-    bindNum('water-min', function () { return cfg.water.everyMin; },
-      function (v) { cfg.water.everyMin = v; save(); });
-
-    bindCheck('pomo-on', function () { return cfg.pomodoro.on; },
-      function (v) { cfg.pomodoro.on = v; save(); });
-    bindNum('pomo-focus', function () { return cfg.pomodoro.focusMin; },
-      function (v) { cfg.pomodoro.focusMin = v; save(); });
-    bindNum('pomo-break', function () { return cfg.pomodoro.breakMin; },
-      function (v) { cfg.pomodoro.breakMin = v; save(); });
-    bindNum('pomo-rounds', function () { return cfg.pomodoro.rounds; },
-      function (v) { cfg.pomodoro.rounds = v; save(); });
-
-    ['breakfast', 'lunch', 'dinner'].forEach(function (k) {
-      var el = $('meal-' + k);
-      cfg.meals = cfg.meals || {};
-      el.value = cfg.meals[k] || '';
-      el.addEventListener('change', function () { cfg.meals[k] = el.value; save(); });
-    });
-    bindCheck('aff-on', function () { return cfg.affection.on; },
-      function (v) { cfg.affection.on = v; save(); });
-    bindNum('aff-min', function () { return cfg.affection.everyMin; },
-      function (v) { cfg.affection.everyMin = v; save(); });
-    bindCheck('ambient-on', function () { return cfg.ambient.on; },
-      function (v) { cfg.ambient.on = v; save(); });
-
-    bindCheck('launchAtLogin', function () { return cfg.launchAtLogin; },
-      function (v) { save({ launchAtLogin: v }); });
-    bindCheck('peek', function () { return cfg.peek; }, function (v) { save({ peek: v }); });
-
-    $('rem-add').addEventListener('click', function () {
-      var t = $('rem-time').value, m = $('rem-msg').value;
-      if (!t) return;
-      cfg.reminders = cfg.reminders || [];
-      cfg.reminders.push({ time: t, msg: m || '알림!' });
+    $("rem-add").onclick = () => {
+      if (!$("rem-time").value || cfg.reminders.length >= 32) return;
+      cfg.reminders.push({
+        time: $("rem-time").value,
+        msg: $("rem-msg").value,
+      });
       save();
-      $('rem-msg').value = '';
+      $("rem-msg").value = "";
       renderReminders();
+    };
+    $("close").onclick = () => api.closeSettings();
+    $("hi").onclick = () => api.runCommand("wave");
+    $("reset").onclick = async () => {
+      if (!confirm(I.t("resetConfirm"))) return;
+      cfg = await api.resetConfig();
+      translate();
+      sync();
+      load();
+    };
+    api.onConfig((c) => {
+      let old = cfg;
+      cfg = S.preferences.normalize(c);
+      if (cfg.language !== old.language) translate();
+      sync();
+      if (cfg.pattern !== old.pattern) load();
+      else if (sprite) sprite.recolor(S.derivePalette(cfg.baseColor));
     });
-
-    $('close').addEventListener('click', function () { api.closeSettings(); });
-    $('hi').addEventListener('click', function () { api.runCommand('wave'); });
-    $('reset').addEventListener('click', function () {
-      api.resetConfig().then(function (c) {
-        cfg = c;
-        location.reload();
-      });
-    });
-  }
-
-  api.getConfig().then(function (c) {
-    cfg = c;
-    return loadSprite();
-  }).then(function () {
-    bindAll();
-    renderSwatches();
-    renderReminders();
-    loop();
+    load();
+    requestAnimationFrame(loop);
   });
-
-  api.onConfig(function (c) { cfg = Object.assign({}, cfg, c); });
 })();

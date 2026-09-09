@@ -1,148 +1,25 @@
-﻿<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<title>수다리 데모 — 브라우저에서 미리보기</title>
-<link rel="stylesheet" href="../renderer/style.css">
-<style>
-  html, body { pointer-events: auto; background: #14110e; color: #e9dccb; }
-  body { font-family: "Pretendard", "Malgun Gothic", sans-serif; padding: 22px 26px; }
-  h1 { font-size: 18px; margin-bottom: 4px; }
-  .sub { font-size: 12px; color: #9b8874; margin-bottom: 16px; }
-  .panel { display: flex; gap: 20px; flex-wrap: wrap; }
-  .card {
-    background: #1e1a15; border: 2px solid #3b2c22; padding: 14px 16px;
-    min-width: 260px; max-width: 420px;
-  }
-  .card h2 { font-size: 12px; color: #e7b978; margin-bottom: 8px; }
-  .btns { display: flex; flex-wrap: wrap; gap: 6px; }
-  button {
-    font: inherit; font-size: 12px; padding: 5px 10px; cursor: pointer;
-    color: #2b2119; background: #e7b978; border: 2px solid #33231a; box-shadow: 2px 2px 0 #0d0b09;
-  }
-  button.ghost { background: #3b2c22; color: #e9dccb; }
-  button:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #0d0b09; }
-  textarea {
-    width: 100%; height: 88px; margin-top: 6px; padding: 8px; font: inherit; font-size: 12px;
-    color: #f4ecdf; background: #14100c; border: 2px solid #4a382c; resize: none;
-  }
-  .scroller { height: 110px; overflow-y: scroll; border: 2px solid #4a382c; background: #14100c; padding: 8px; font-size: 12px; line-height: 1.9; color: #8d7a67; }
-  .tips { font-size: 11px; color: #8d7a67; line-height: 1.7; margin-top: 8px; }
-  #stage { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
-  #petbox { position: absolute; width: 320px; height: 300px; pointer-events: none; }
-  #petbox canvas { pointer-events: auto; }
-  input[type="color"] { width: 42px; height: 26px; padding: 0; background: #14100c; border: 2px solid #4a382c; }
-  label { font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin-right: 10px; }
-</style>
-</head>
-<body>
-  <h1>수다리 🦦 브라우저 데모</h1>
-  <div class="sub">데스크톱 앱과 같은 스프라이트·같은 행동 엔진입니다. 수달을 <b>드래그</b>하고 <b>머리를 문질러</b> 보세요.</div>
-
-  <div class="panel">
-    <div class="card">
-      <h2>동작 시켜보기</h2>
-      <div class="btns">
-        <button data-cmd="wave">인사</button>
-        <button data-cmd="stretch">스트레칭</button>
-        <button data-cmd="water">물 마시기</button>
-        <button data-cmd="jump">신남 점프</button>
-        <button data-cmd="float">배영</button>
-        <button data-cmd="sleep">잠자기</button>
-        <button data-cmd="love">사랑해 💕</button>
-        <button data-cmd="meal">밥 시간</button>
-        <button data-cmd="crack">조개 까기</button>
-        <button data-cmd="fireworks">폭죽 🎆</button>
-        <button data-cmd="snack">새우 주기</button>
-        <button class="ghost" data-cmd="pomodoro-toggle">뽀모도로</button>
-        <button class="ghost" data-cmd="peek-toggle">빼꼼 모드</button>
-      </div>
-      <h2 style="margin-top:12px">AI 에이전트 상태</h2>
-      <div class="btns">
-        <button class="ghost" id="ai-think">생각 중</button>
-        <button class="ghost" id="ai-done">작업 완료</button>
-      </div>
-      <div class="tips">데스크톱 앱에서는 Claude Code 훅이 이 신호를 자동으로 보냅니다.</div>
-    </div>
-
-    <div class="card">
-      <h2>타이핑 반응 (꾹꾹이 · 과열)</h2>
-      <textarea placeholder="여기에 아무거나 타이핑해보세요. 빠르게 치면 머리에서 김이 납니다."></textarea>
-      <h2 style="margin-top:12px">스크롤 반응 (조개 까기)</h2>
-      <div class="scroller">
-        스크롤을 굴리면 수달이 배 위에 돌을 올리고 조개를 깝니다.<br>
-        ⬇︎<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>다 왔습니다!
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>커스터마이징</h2>
-      <label>털 색 <input type="color" id="color" value="#925f3f"></label>
-      <label>무늬
-        <select id="pattern">
-          <option value="plain">민무늬</option>
-          <option value="spots">점박이</option>
-          <option value="stripes">줄무늬</option>
-          <option value="blaze">이마 무늬</option>
-        </select>
-      </label>
-      <div class="btns" style="margin-top:8px">
-        <button class="ghost" data-color="#6b4a3c">진갈색수달</button>
-        <button class="ghost" data-color="#4a4f57">검은수달</button>
-        <button class="ghost" data-color="#c9a06a">금빛수달</button>
-        <button class="ghost" data-color="#e6dccb">흰수달</button>
-        <button class="ghost" data-color="#d9b8c4">분홍수달</button>
-      </div>
-      <label style="margin-top:10px">크기
-        <select id="scale"><option selected>2</option><option>3</option><option>4</option><option>5</option></select>
-      </label>
-      <label>이름 <input type="text" id="name" placeholder="내 이름" style="width:90px"></label>
-      <div class="tips">
-        데스크톱 앱에서는 이 설정이 트레이 → 설정 창에 있고, 파일로 저장됩니다.
-      </div>
-    </div>
-  </div>
-
-  <div id="stage">
-    <div id="petbox">
-      <div id="pin" class="pin"></div>
-      <div id="bubble" class="bubble"></div>
-      <div id="timer" class="timer"><div class="shell"></div></div>
-      <div id="timerpanel" class="tpanel">
-        <div class="tp-title">집중 타이머 🐚</div>
-        <div class="tp-row"><span>집중</span><button data-k="focusMin" data-d="-5">−</button><b id="tp-focus">25</b><i>분</i><button data-k="focusMin" data-d="5">+</button></div>
-        <div class="tp-row"><span>휴식</span><button data-k="breakMin" data-d="-1">−</button><b id="tp-break">5</b><i>분</i><button data-k="breakMin" data-d="1">+</button></div>
-        <div class="tp-row"><span>반복</span><button data-k="rounds" data-d="-1">−</button><b id="tp-rounds">4</b><i>회</i><button data-k="rounds" data-d="1">+</button></div>
-        <div class="tp-row tp-actions"><button id="tp-start" class="primary">▶ 시작</button><button id="tp-stop">■ 중단</button><button id="tp-close">닫기</button></div>
-      </div>
-      <canvas id="pet" style="position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated"></canvas>
-    </div>
-  </div>
-
-  <script src="../assets/atlas.js"></script>
-  <script src="../renderer/sprite.js"></script>
-  <script src="../renderer/audio.js"></script>
-  <script src="../renderer/layout.js"></script>
-  <script src="../renderer/pet.js"></script>
-  <script>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sudari · A little otter. A little better day.</title><link rel="stylesheet" href="../renderer/style.css"><style>body{background:#eaf0e9;padding:28px;overflow:auto;display:grid;grid-template-columns:minmax(280px,400px) minmax(360px,1fr);gap:24px;align-items:start}@media(max-width:800px){body{display:flex;flex-direction:column;padding:20px}#stage{width:100%!important;height:500px!important;position:relative!important;top:0!important}.demo-controls{max-width:none!important;width:100%}}.demo-controls{max-width:400px;position:relative;z-index:2}.demo-controls h1{font-size:36px;letter-spacing:-1px;margin:8px 0}.demo-controls p{font-size:13px;line-height:1.7;margin-bottom:20px}.btns{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 22px}.demo-controls label{display:flex;justify-content:space-between;gap:10px;margin:12px 0;align-items:center}.demo-controls select{max-width:55%}.demo-controls textarea{padding:12px;min-height:90px;width:100%;border:1px solid #cdd8cd;border-radius:12px;background:#fff}.scroller{height:100px;overflow:auto;padding:12px;background:#fff;border-radius:12px;margin:12px 0}.demo-controls a{color:#416d5d}#stage{position:sticky;top:20px;height:calc(100vh - 56px);min-height:450px;pointer-events:none;z-index:1}#petbox{position:absolute;pointer-events:none;width:360px;height:450px}</style></head><body><main class="demo-controls"><div class="eyebrow">SUDARI · PLAYGROUND</div><h1>A little otter.<br>A little better day.</h1><p>A pixel river otter for your desktop. Try the shell timer, type a little, or give your new friend a shrimp.</p><div class="btns"><button class="ui-button" data-cmd="wave">👋 <span data-i18n="wave"></span></button><button class="ui-button" data-cmd="love">💗 <span data-i18n="love"></span></button><button class="ui-button" data-cmd="snack">🦐 <span data-i18n="snack"></span></button><button class="ui-button" data-cmd="crack">🐚 <span data-i18n="crack"></span></button><button class="ui-button" data-cmd="stretch">🙆 <span data-i18n="stretch"></span></button><button class="ui-button" data-cmd="water">💧 <span data-i18n="water"></span></button><button class="ui-button" data-cmd="float">🌊 <span data-i18n="float"></span></button><button class="ui-button" data-cmd="fireworks">✨ <span data-i18n="fireworks"></span></button><button class="ui-button" data-cmd="timer-panel">⏱ <span data-i18n="timer"></span></button></div><label>🌐 <span data-i18n="language"></span><select id="language"></select></label><label>↔ <span data-i18n="size"></span><select id="scale"><option>2</option><option>3</option><option>4</option><option>5</option></select></label><label>🎨 <span data-i18n="color"></span><input type="color" id="color" value="#62504c"></label><label>✿ <span data-i18n="pattern"></span><select id="pattern"><option value="plain" data-i18n="plain"></option><option value="spots" data-i18n="spots"></option><option value="stripes" data-i18n="stripes"></option><option value="blaze" data-i18n="blaze"></option></select></label><label>♡ <span data-i18n="name"></span><input id="name" maxlength="32"></label><textarea placeholder="Type here to see those little paws at work…"></textarea><div class="scroller">Scroll for a shell surprise ↓<br>·<br>·<br>·<br>·<br>·<br>·<br>·<br>🐚</div><div class="btns"><button class="ui-button" id="ai-think">AI · Thinking</button><button class="ui-button" id="ai-done">AI · Done</button></div><p><a href="../renderer/settings.html">⚙ Settings preview</a> · <a href="../renderer/welcome.html">🌐 First launch</a> · <a href="https://github.com/seojaeohcode/SUDARI">GitHub ↗</a></p></main><div id="stage"><div id="petbox"><div id="pin" class="pin"></div><div id="bubble" class="bubble" role="status"></div>
+<button id="timer" class="timer" data-i18n-title="timer"><span class="shell"></span></button>
+<div id="timerpanel" class="tpanel" role="group" data-i18n-title="timer"><div class="tp-title">🐚 <span data-i18n="timer"></span></div><div class="tp-row"><span data-i18n="focus"></span><button data-k="focusMin" data-d="-5" aria-label="− focus">−</button><b id="tp-focus"></b><button data-k="focusMin" data-d="5" aria-label="+ focus">+</button></div><div class="tp-row"><span data-i18n="break"></span><button data-k="breakMin" data-d="-1" aria-label="− break">−</button><b id="tp-break"></b><button data-k="breakMin" data-d="1" aria-label="+ break">+</button></div><div class="tp-row"><span data-i18n="rounds"></span><button data-k="rounds" data-d="-1" aria-label="− rounds">−</button><b id="tp-rounds"></b><button data-k="rounds" data-d="1" aria-label="+ rounds">+</button></div><div class="tp-actions"><button id="tp-start" class="primary" data-i18n="start"></button><button id="tp-stop">⏹ <span data-i18n="stop"></span></button><button id="tp-close">× <span data-i18n="close"></span></button></div></div><canvas id="pet"></canvas></div></div><script src="../assets/atlas.js"></script><script src="../renderer/locales.js"></script><script src="../renderer/i18n.js"></script><script src="../renderer/preferences.js"></script><script src="../renderer/sprite.js"></script><script src="../renderer/audio.js"></script><script src="../renderer/layout.js"></script><script src="../renderer/pet.js"></script>  <script>
   /* 웹 데모용 브리지 — Electron 창 대신 페이지 안의 div를 움직인다. */
   (function (g) {
-    var box = document.getElementById('petbox');
+    var box = document.getElementById('petbox'),stage=document.getElementById('stage');
     var pos = { x: window.innerWidth - 340, y: window.innerHeight - 310 };
     var cur = { x: -99999, y: -99999 };
     var h = { key: [], wheel: [], agent: [], command: [], config: [] };
     function place() { box.style.left = pos.x + 'px'; box.style.top = pos.y + 'px'; }
     place();
 
-    window.addEventListener('mousemove', function (e) { cur.x = e.clientX; cur.y = e.clientY; });
+    window.addEventListener('mousemove', function (e) { var r=stage.getBoundingClientRect();cur.x = e.clientX-r.left; cur.y = e.clientY-r.top; });
     window.addEventListener('keydown', function () { h.key.forEach(function (f) { f(); }); });
     window.addEventListener('wheel', function (e) {
       h.wheel.forEach(function (f) { f(e.deltaY || 120); });
     }, { passive: true });
 
     var cfg = {};
-    try { cfg = JSON.parse(localStorage.getItem('sudari') || '{}'); } catch (e) { cfg = {}; }
+    try { cfg = JSON.parse(localStorage.getItem('sudari-v2') || '{}'); } catch (e) { cfg = {}; }
 
+    cfg = g.Sudari.preferences.normalize(Object.assign({},cfg,{languageChosen:true}));
     g.Sudari.bridge = {
       isElectron: false,
       onKey: function (c) { h.key.push(c); },
@@ -151,7 +28,7 @@
       onCommand: function (c) { h.command.push(c); },
       onConfig: function (c) { h.config.push(c); },
       getConfig: function () { return cfg; },
-      saveConfig: function (c) { cfg = c; localStorage.setItem('sudari', JSON.stringify(c)); },
+      saveConfig: function (c) { cfg = c; localStorage.setItem('sudari-v2', JSON.stringify(c)); },
       cursorGlobal: function () { return cur; },
       cursorLocal: function () { return { x: cur.x - pos.x, y: cur.y - pos.y }; },
       petPos: function () { return pos; },
@@ -165,8 +42,8 @@
         place();
         if (g.sudariPet) g.sudariPet.resize();
       },
-      workArea: function () { return { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }; },
-      setInteractive: function () { /* 데모에서는 항상 상호작용 가능 */ },
+      workArea: function () { return { x: 0, y: 0, width: stage.clientWidth, height: stage.clientHeight }; },
+      setInteractive: function (b) { box.querySelector('canvas').style.pointerEvents=b?'auto':'none'; },
       contextMenu: function () { h.command.forEach(function (f) { f('wave'); }); },
       _emit: function (kind, a, b) { h[kind].forEach(function (f) { f(a, b); }); }
     };
@@ -185,7 +62,7 @@
       B._emit('agent', { state: 'thinking' });
     });
     document.getElementById('ai-done').addEventListener('click', function () {
-      B._emit('agent', { state: 'done', text: '데모 작업 완료!' });
+      B._emit('agent', { state: 'done', text: Sudari.i18n.t('done') });
     });
     function patch(p) {
       var pet = window.sudariPet;
@@ -194,6 +71,9 @@
       B.saveConfig(next);
       pet.applyConfig(next);
     }
+    Sudari.i18n.languages.forEach(function(l){var o=document.createElement('option');o.value=l.id;o.textContent=l.name;document.getElementById('language').appendChild(o);});
+    document.getElementById('language').onchange=function(){patch({language:this.value});};
+    window.addEventListener('resize',function(){if(window.sudariPet)B.resizePet(sudariPet.cfg.scale);});
     document.getElementById('color').addEventListener('input', function () {
       patch({ baseColor: this.value });
     });

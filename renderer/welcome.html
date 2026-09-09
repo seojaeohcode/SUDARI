@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>Sudari</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="welcome">
+    <main class="page">
+      <img class="mascot" src="../assets/welcome.png" alt="Sudari" />
+      <p class="eyebrow">SUDARI · 2.0</p>
+      <h1 data-i18n="choose"></h1>
+      <p class="muted" data-i18n="welcome"></p>
+      <div
+        id="languages"
+        class="languages"
+        role="group"
+        data-i18n-title="language"
+      ></div>
+      <button id="meet" class="ui-button primary" data-i18n="meet"></button>
+      <p class="hint" data-i18n="languageHint"></p>
+    </main>
+    <script src="locales.js"></script>
+    <script src="i18n.js"></script>
+    <script src="preferences.js"></script>
+    <script src="preview-api.js"></script>
+    <script src="welcome.js"></script>
+  </body>
+</html>

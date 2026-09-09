@@ -24,9 +24,12 @@
         });
 
         // 무늬가 바뀌면 시트를 다시 읽는다
+        var patternRequest = 0;
         pet.onPatternChange = function (p) {
+          var request = ++patternRequest;
           S.Sprite.load(ASSETS, p, global.SUDARI_ATLAS, global.SUDARI_PALETTE)
             .then(function (ns) {
+              if(request !== patternRequest) return;
               pet.sprite = ns;
               pet.applyConfig(pet.cfg, true);
             });
@@ -35,7 +38,7 @@
         S.bridge.onConfig(function (c) { pet.applyConfig(c); });
         global.sudariPet = pet;
         pet.start();
-        setTimeout(function () { pet.greet(); }, 500);   // 켜자마자 "사랑해"
+        setTimeout(function () { if(pet.cfg.languageChosen) pet.greet(); }, 500);   // 켜자마자 "사랑해"
       })
       .catch(function (e) {
         document.title = '수다리 로드 실패: ' + e;

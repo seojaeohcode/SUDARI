@@ -86,6 +86,9 @@
     this.bctx.imageSmoothingEnabled = false;
     this.fur = palette.FUR;
     this._recolorCache = {};
+    var mask = document.createElement('canvas'); mask.width=img.width; mask.height=img.height;
+    var mx=mask.getContext('2d'); mx.drawImage(img,0,0);
+    this.alpha=mx.getImageData(0,0,img.width,img.height).data; this.sheetWidth=img.width;
   }
 
   /** 팔레트 RGB를 정확히 치환해 시트를 다시 만든다. */
@@ -123,6 +126,12 @@
     this.sheet = c;
     this.fur = colors.FUR || this.palette.FUR;
     this._recolorCache[key] = { sheet: c, fur: this.fur };
+  };
+
+  Sprite.prototype.contains = function(name, frame, x, y) {
+    var a=this.anim(name); x=Math.floor(x); y=Math.floor(y);
+    if(x<0||y<0||x>=this.fw||y>=this.fh)return false;
+    return this.alpha[((a.row*this.fh+y)*this.sheetWidth+(frame%a.count)*this.fw+x)*4+3]>0;
   };
 
   Sprite.prototype.anim = function (name) {

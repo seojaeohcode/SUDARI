@@ -1,133 +1,95 @@
-<p align="center"><img src="docs/banner.svg" width="100%" alt="SUDARI — 내 컴퓨터에 사는, 조개만 한 응원."></p>
+<p align="center"><img src="docs/banner.svg" width="100%" alt="SUDARI — A little otter. A little better day."></p>
 
-<p align="center"><b>일하는 당신 옆에, 작은 픽셀 수달 한 마리.</b><br>
-타닥타닥 치면 꾹꾹이. 스크롤하면 조개 까기. 집중이 끝나면 함께 폴짝.<br>
-가끔은 아무 이유 없이 사랑한다고 말해주는 데스크톱 친구예요.</p>
+<p align="center"><b>A tiny pixel otter that lives on your desktop.</b><br>
+It follows your cursor, kneads while you type, and keeps you company through one more focus session.</p>
 
-<p align="center"><b>한국어</b> · <a href="README.en.md">English</a> · <a href="https://github.com/seojaeohcode/SUDARI/releases/latest">다운로드</a> · <a href="CONTRIBUTING.md">함께 만들기</a></p>
+<p align="center"><a href="README.ko.md">한국어</a> · <b>English</b> · <a href="https://github.com/seojaeohcode/SUDARI/releases/latest">Download</a> · <a href="CONTRIBUTING.md">Contribute</a></p>
 
 <p align="center">
-<a href="https://github.com/seojaeohcode/SUDARI/releases/latest"><img src="https://img.shields.io/github/v/release/seojaeohcode/SUDARI?style=flat&amp;color=438778" alt="최신 릴리즈"></a>
-<a href="https://github.com/seojaeohcode/SUDARI/actions/workflows/release.yml"><img src="https://github.com/seojaeohcode/SUDARI/actions/workflows/release.yml/badge.svg" alt="Windows와 Mac 빌드 및 테스트"></a>
-<img src="https://img.shields.io/badge/Windows-10%20%2F%2011-438778" alt="Windows 10, 11">
-<img src="https://img.shields.io/badge/macOS-12%2B-9c88bd" alt="macOS 12 이상">
-<a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-d791a9" alt="Apache 2.0 라이선스"></a>
+<a href="https://github.com/seojaeohcode/SUDARI/releases/latest"><img src="https://img.shields.io/github/v/release/seojaeohcode/SUDARI?style=flat&amp;color=438778" alt="Latest release"></a>
+<a href="https://github.com/seojaeohcode/SUDARI/actions/workflows/release.yml"><img src="https://github.com/seojaeohcode/SUDARI/actions/workflows/release.yml/badge.svg" alt="Build and tests"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-9c88bd" alt="Apache 2.0 license"></a>
 </p>
 
-<p align="center"><img src="docs/sudari.gif" height="220" alt="조개를 꼭 쥐고 숨 쉬는 수다리"> &nbsp; <img src="docs/reel.gif" height="220" alt="인사하고, 꾹꾹이하고, 조개를 까고, 배영하고, 잠드는 수다리"></p>
-<p align="center"><sub>가입도, 구독도 없어요. 조개 반 나눠줄 친구만 있으면 돼요. 🐚</sub></p>
+<p align="center"><img src="docs/reel.gif" height="220" alt="Sudari waves, types, cracks shells, swims and falls asleep"></p>
+<p align="center"><sub>No account. No subscription. Just a little otter with a shell to share.</sub></p>
 
-## 🦦 수다리 입양하기
+## 🐚 Bring an otter home
 
-| 내 컴퓨터 | 바로 다운로드 · v1.1.0 |
+| Your computer | Download v2.0.0 |
 | :--- | :--- |
-| **Windows 10 / 11** · x64 | [설치형 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v1.1.0/Sudari-1.1.0-Setup.exe) · [무설치 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v1.1.0/Sudari-1.1.0-Portable.exe) |
-| **Mac · Apple Silicon** (M 시리즈) | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v1.1.0/Sudari-1.1.0-mac-arm64.dmg) |
-| **Mac · Intel** | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v1.1.0/Sudari-1.1.0-mac-x64.dmg) |
+| Windows 10 / 11 · x64 | [Installer](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-Setup.exe) · [Portable](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-Portable.exe) |
+| Mac · Apple Silicon (M series) | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-mac-arm64.dmg) |
+| Mac · Intel | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-mac-x64.dmg) |
 
-Mac은 **macOS 12 이상**을 지원해요. ZIP과 파일 확인용 SHA-256은 [릴리즈 페이지](https://github.com/seojaeohcode/SUDARI/releases/latest)에 있어요. 실행할 때 Node.js나 Python은 필요 없어요.
+macOS 12 or later. ZIP alternatives and SHA-256 checksums are on the [release page](https://github.com/seojaeohcode/SUDARI/releases/latest). No Node.js or Python needed to use the app. Choose from 12 languages during setup or first launch; English is the default. Change it anytime in Settings.
 
-**Windows:** 설치형 또는 무설치 파일을 실행해요. 코드 서명이 없는 개인 배포 앱이라 SmartScreen 안내가 뜰 수 있어요. 이 저장소에서 받은 파일인지 확인한 뒤 `추가 정보 → 실행`을 선택하세요.
+**Windows:** run the installer or portable EXE. Builds are unsigned, so SmartScreen may ask for confirmation. Check that your download comes from this repository before choosing **More info → Run anyway**.
 
-**Mac:** DMG를 열고 Sudari를 **응용 프로그램** 폴더로 끌어 놓아요. Apple 공증을 받지 않아 첫 실행이 막히면, 출처를 확인한 뒤 `시스템 설정 → 개인정보 보호 및 보안 → 그래도 열기`를 선택하세요.
+**Mac:** open the DMG and drag Sudari into Applications. Builds are not Apple-notarized; if macOS blocks the first launch, use **System Settings → Privacy & Security → Open Anyway** after checking the source. Keyboard and scroll reactions need Accessibility / Input Monitoring permission. Choose **Enable keyboard & scroll reactions** (or its translation) in the menu bar, grant access, then restart Sudari. The other features work without these permissions.
 
-<details>
-<summary>⌨️ Mac에서 키보드·스크롤 반응 켜기</summary>
+Right-click the otter or use its tray / menu-bar icon for settings, size, the timer and Quit.
 
-메뉴바의 수다리 → **키보드·스크롤 반응 켜기**를 누르세요. 시스템 설정에서 **손쉬운 사용(접근성) / 입력 모니터링** 권한을 허용하고 수다리를 다시 켜면 돼요. 허용하지 않아도 시선 추적, 쓰다듬기, 타이머와 알림은 사용할 수 있어요.
+## A small friend for your working day
 
-</details>
-
-바탕화면 오른쪽 아래에서 만나요. **수달 우클릭** 또는 **트레이 / 메뉴바 아이콘**으로 설정과 종료 메뉴를 열 수 있어요.
-
-> 🐚 **1.1.0에서 고쳤어요:** 크기를 2~5배로 바꾸면 뽀모도로 조개와 글자도 함께 커져요. 창도 넉넉해져 큰 수달과 조개가 잘리지 않아요. 이전 1.1.0을 받았다면 새 파일로 다시 설치해 주세요. [변경 내용](docs/releases/1.1.0.md)
-
-## 오늘은 같이 뭘 할까요?
-
-| | 당신이 이렇게 하면 | 수다리는 이렇게 해요 |
-| :---: | :--- | :--- |
-| 👀 | 마우스를 움직여요 | 눈으로 졸졸 따라와요. 머리를 문지르면 `^^` 눈과 하트! |
-| ⌨️ | 타닥타닥 일해요 | 작은 키보드에 꾹꾹이. 너무 빠르면 머리에서 김이 모락모락. |
-| 🐚 | 스크롤을 내려요 | 배 위에 돌을 놓고 조개를 톡톡. 다 까면 열린 조개를 보여줘요. |
-| ⏳ | 집중을 시작해요 | 조개 타이머로 집중과 휴식. 마지막 회차까지 끝내면 폭죽 팡! |
-| 💧 | 쉬는 걸 깜빡해요 | 물, 스트레칭, 밥 시간을 챙겨줘요. 시간과 주기는 직접 정해요. |
-| 🤖 | AI 작업을 끝내요 | 로컬 훅으로 알려주면 같이 고민하고, 완료되면 폴짝 뛰어요. |
-| 💕 | 그냥 곁에 있어요 | 인사하고, 새우 먹고, 배영하고, 졸다가 가끔 마음을 전해요. |
-
-<p align="center"><img src="docs/animations.png" width="900" alt="수다리의 17가지 표정과 동작: 인사, 꾹꾹이, 조개 까기, 배영, 잠자기 등"></p>
-
-## 🎨 내 수달은 무슨 색일까
-
-<p align="center"><img src="docs/palette.png" width="900" alt="갈색, 진갈색, 검정, 금빛, 회색, 흰색, 분홍, 민트의 8가지 털색"></p>
-
-트레이 → **설정…**에서 원하는 친구로 꾸며요.
-
-- **털 색 8종 + 직접 고른 색**, 민무늬·점박이·줄무늬·이마 무늬
-- **2~5배 크기**, 대사에서 불러줄 이름, 머리 위 고정 메모
-- 소리와 반응 켜기/끄기, 식사·물·스트레칭 알림, 로그인 시 자동 실행
-
-이름을 적으면 **“사랑해 ○○!”**, **“○○, 밥 먹으러 가자!”** 하고 불러줘요.
-
-| 조작 | 반응 |
+| You… | Sudari… |
 | :--- | :--- |
-| 몸통 드래그 | 모찌처럼 늘어나며 이동해요. 놓으면 톡, 착지! |
-| 머리 쓰다듬기 | 웃는 눈과 하트, 고롱고롱 소리 |
-| 꼬리 잡기 | “야! 꼬리 잡지 마!” 너무 놀리면 삐져요. |
-| 머리 위 조개 클릭 | 집중·휴식·반복을 `−` / `+`로 정해요. |
-| 빼꼼 모드 | 화면 가장자리에 살짝 숨어서 곁에 있어요. |
-| 우클릭 / 트레이 메뉴 | 인사, 새우, 폭죽, 설정, 종료 |
+| Move the mouse | Follows it with its eyes. Rub its head for happy eyes and hearts. |
+| Type or scroll | Kneads a tiny keyboard or opens a shell between its paws. |
+| Need a little focus | Offers a shell-shaped Pomodoro timer, breaks and a fireworks finish. |
+| Forget to take a break | Reminds you to drink water, stretch and eat. |
+| Finish an AI task | Celebrates when your tool sends a local completion signal. |
+| Just want company | Waves, snacks, swims, naps and occasionally says something kind. |
 
-## 🤖 AI에게도 응원 담당이 생겼어요
+<p align="center"><img src="docs/animations.png" width="900" alt="Seventeen original pixel otter animations"></p>
 
-도구가 작업을 시작하고 끝낼 때 아래 주소로 신호를 보내면 돼요.
+**Make it yours:** eight fur presets, a custom color picker, four patterns, sizes 2×–5×, your name in dialogue, a pinned note and optional reminders. Drag the otter to move it. Peek mode tucks it against the screen edge.
+
+<p align="center"><img src="docs/palette.png" width="900" alt="Eight fur colors, from brown and gold to pink and mint"></p>
+
+**New in 2.0.0:** a redrawn river otter, crisp shell art with readable focus/break labels, a cute illustrated right-click menu and tabbed settings. The shell stays close to your otter, scales together with it, and makes room for movement. Small displays automatically fit the pet. Dialogue, menus and settings share the same language. [Release notes](docs/releases/2.0.0.md).
+
+## 🌍 A small friend, in your language
+
+English · 한국어 · 日本語 · 简体中文 · 繁體中文 · Español · Français · Deutsch · Português (Brasil) · Italiano · Русский · العربية
+
+Windows setup asks for a language, starting in English. Portable Windows and macOS show a friendly first-launch picker. The choice is saved for dialogue, the right-click menu, timer labels and settings. Arabic uses right-to-left layout. Your own notes and messages stay exactly as you write them.
+
+<p align="center"><img src="docs/settings.png" width="550" alt="Sudari’s tabbed settings with language selection and a live otter preview"> <img src="docs/menu.png" width="270" alt="Illustrated right-click menu with quick actions, size and language"></p>
+
+## 🤖 Give your AI a tiny cheerleader
+
+Call these local endpoints from your tool's start/finish hooks:
 
 ```bash
 curl --max-time 1 http://127.0.0.1:37421/thinking
 curl --max-time 1 http://127.0.0.1:37421/done
 ```
 
-Windows PowerShell에서는 `curl.exe`를 사용하세요. Claude Code처럼 시작·종료 훅에서 명령을 실행할 수 있는 도구와 연결할 수 있어요. AI 연동 없이도 수다리의 모든 일반 기능을 쓸 수 있어요.
+Use `curl.exe` in Windows PowerShell. Works with tools that can run a command at task start or completion. Integration is optional; no AI account is needed for Sudari itself. [Claude Code hook example](docs/guide.ko.md#-ai-에이전트-연동).
 
-[Claude Code 설정 예시와 자세한 사용법 →](docs/guide.ko.md#-ai-에이전트-연동)
+## 🔒 Your desktop stays yours
 
-## 🔒 내 컴퓨터 안에서만 살아요
+Sudari's input handler counts key presses and scroll events; it does not store typed text or key codes. The native hook receives OS input events, while the app uses only activity signals. Settings stay in a local JSON file. The app sends no analytics or telemetry and only listens on loopback (`127.0.0.1`) for optional AI signals.
 
-수다리는 입력 후크에서 **키 눌림 횟수와 스크롤 활동**만 사용해요. 네이티브 후크가 운영체제 입력 이벤트를 받지만, 앱은 입력한 글이나 키 코드를 기록하지 않아요. 분석·추적 데이터를 보내지 않으며, AI 연동 서버는 `127.0.0.1`에서만 요청을 받아요.
-
-| 운영체제 | 설정 파일 |
+| OS | Settings file |
 | :--- | :--- |
 | Windows | `%APPDATA%\sudari\config.json` |
 | macOS | `~/Library/Application Support/sudari/config.json` |
 
-## 🛠 수다리를 직접 키워보기
+## 🛠 Make something with Sudari
 
 ```bash
 git clone https://github.com/seojaeohcode/SUDARI.git
 cd SUDARI
 npm ci
 npm start
+npm test
+npm run test:smoke
 ```
 
-Node.js **22.12 이상**이 필요해요. 스프라이트를 다시 만들 때만 Python + Pillow가 필요해요.
+Node.js 22.12+ required. Build on Windows with `npm run dist`; on macOS with `npm run dist:mac`. Python + Pillow are only needed to regenerate sprites. Run `python -m http.server 8765` and open `http://localhost:8765/web/demo.html` for a browser playground using the same animation engine.
 
-| 하고 싶은 일 | 명령 |
-| :--- | :--- |
-| 레이아웃 회귀 검사 | `npm test` |
-| 실제 Electron 실행·조개 클릭 검사 | `npm run test:smoke` |
-| Windows에서 EXE 빌드 | `npm run dist` |
-| Mac에서 Intel + Apple Silicon 빌드 | `npm run dist:mac` |
-| 스프라이트 다시 생성 | `npm run sprites` |
+The sprite generator, artwork and code are all included under [Apache-2.0](LICENSE). [Contributions](CONTRIBUTING.md), [bug reports](https://github.com/seojaeohcode/SUDARI/issues/new/choose), translations and new otter ideas are welcome.
 
-`web/demo.html`을 열면 같은 엔진을 브라우저에서도 만져볼 수 있어요. 태그 배포는 Windows·Mac Intel·Mac Apple Silicon의 검사와 빌드가 **모두 성공한 뒤** 파일 6종과 체크섬을 함께 공개해요.
-
-## 🌱 같이 키워요
-
-수다리는 **코드도, 픽셀 수달도 [Apache-2.0](LICENSE) 오픈소스**예요. 스프라이트 생성기까지 들어 있어요.
-
-[버그 알려주기](https://github.com/seojaeohcode/SUDARI/issues/new/choose) · [기여 안내](CONTRIBUTING.md) · [구조와 자세한 사용법](docs/guide.ko.md)
-
-새 동작 아이디어, 번역, 작은 수정도 환영해요. 한국어와 영어 편한 쪽으로 이야기해 주세요.
-
-<p align="center"><b>오늘 수다리 때문에 한 번 웃었다면, ⭐로 다른 친구에게도 소개해 주세요.</b><br><sub>작은 수달이 더 많은 책상에 놀러 갈 수 있어요.</sub></p>
-
-<p align="center"><sub>콤냥이(comnyang.com)의 픽셀 고양이에서 영감을 받아, 수달 그림과 코드를 처음부터 만들었어요.</sub></p>
+<p align="center"><b>If Sudari makes your day a little softer, leave a ⭐ and help another otter find a home.</b><br><sub>Inspired by the pixel cat at comnyang.com. Original otter artwork and implementation.</sub></p>

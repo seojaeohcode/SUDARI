@@ -42,6 +42,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: First launch and installer language
+        run: |
+          npx electron tools/smoke-welcome.js
+          npx electron tools/smoke-welcome.js --installer
       - name: Electron regression at standard density
         run: npm run test:smoke -- --force-device-scale-factor=1
       - name: Electron regression at Retina density
@@ -89,7 +93,7 @@ jobs:
           sha256sum *.exe *.dmg *.zip > SHA256SUMS.txt
       - uses: softprops/action-gh-release@v2
         with:
-          name: "SUDARI ${{ github.ref_name }} · 조개도 같이 자라요 🐚"
-          body_path: docs/releases/1.1.0.md
+          name: "SUDARI ${{ github.ref_name }} · A little otter, in your language 🦦"
+          body_path: docs/releases/2.0.0.md
           fail_on_unmatched_files: true
           files: release-assets/*

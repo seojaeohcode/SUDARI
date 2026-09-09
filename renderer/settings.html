@@ -1,113 +1,205 @@
-﻿<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'">
-<title>수다리 설정</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body class="settings">
-  <h1>수다리 설정 🦦</h1>
-  <div class="sub">내 컴퓨터에 사는 픽셀 수달</div>
-
-  <div class="preview"><canvas id="prev" width="270" height="160"></canvas></div>
-
-  <section>
-    <h2>내 수달</h2>
-    <label><span class="k">이름 (수달이 불러줄 이름)</span>
-      <input type="text" id="name" placeholder="예: 서코" maxlength="12"></label>
-    <label><span class="k">털 색</span><input type="color" id="baseColor"></label>
-    <div class="swatches" id="swatches"></div>
-    <label><span class="k">무늬</span>
-      <select id="pattern">
-        <option value="plain">민무늬</option>
-        <option value="spots">점박이</option>
-        <option value="stripes">줄무늬</option>
-        <option value="blaze">이마 무늬</option>
-      </select></label>
-    <label><span class="k">크기</span>
-      <select id="scale">
-        <option value="2">2배</option>
-        <option value="3">3배</option>
-        <option value="4">4배</option>
-        <option value="5">5배</option>
-      </select></label>
-  </section>
-
-  <section>
-    <h2>반응</h2>
-    <label><span class="k">마우스 (시선 추적·사냥)</span><input type="checkbox" id="r-mouse"></label>
-    <label><span class="k">키보드 (꾹꾹이·과열)</span><input type="checkbox" id="r-keyboard"></label>
-    <label><span class="k">스크롤 (조개 까기)</span><input type="checkbox" id="r-scroll"></label>
-    <label><span class="k">쓰다듬기 (고롱고롱)</span><input type="checkbox" id="r-pet"></label>
-    <label><span class="k">소리 크기</span><input type="range" id="volume" min="0" max="1" step="0.05"></label>
-    <label><span class="k">음소거</span><input type="checkbox" id="muted"></label>
-    <label><span class="k">잠들기까지 (분)</span><input type="number" id="sleepAfterMin" min="1" max="120"></label>
-  </section>
-
-  <section>
-    <h2>알림</h2>
-    <label><span class="k">스트레칭 알림</span><input type="checkbox" id="stretch-on"></label>
-    <label><span class="k">주기 (분)</span><input type="number" id="stretch-min" min="5" max="600"></label>
-    <label><span class="k">물 마시기 알림</span><input type="checkbox" id="water-on"></label>
-    <label><span class="k">주기 (분)</span><input type="number" id="water-min" min="5" max="600"></label>
-  </section>
-
-  <section>
-    <h2>식사 시간 — "밥 먹으러 가자!"</h2>
-    <label><span class="k">아침</span><input type="time" id="meal-breakfast"></label>
-    <label><span class="k">점심</span><input type="time" id="meal-lunch"></label>
-    <label><span class="k">저녁</span><input type="time" id="meal-dinner"></label>
-    <div class="hint">비워두면 그 끼니는 알리지 않아요. 시간이 되면 수달이 서서 새우를 들고 밥 먹으러 가자고 해요.</div>
-  </section>
-
-  <section>
-    <h2>애정 표현 · 혼자 놀기</h2>
-    <label><span class="k">가끔 사랑한다고 말해주기 💕</span><input type="checkbox" id="aff-on"></label>
-    <label><span class="k">대략 몇 분마다</span><input type="number" id="aff-min" min="5" max="600"></label>
-    <label><span class="k">심심하면 혼자 놀기 (조개 까기·배영·기지개)</span><input type="checkbox" id="ambient-on"></label>
-  </section>
-
-  <section>
-    <h2>집중 타이머 (뽀모도로)</h2>
-    <label><span class="k">사용</span><input type="checkbox" id="pomo-on"></label>
-    <label><span class="k">집중 (분)</span><input type="number" id="pomo-focus" min="1" max="180"></label>
-    <label><span class="k">휴식 (분)</span><input type="number" id="pomo-break" min="1" max="60"></label>
-    <label><span class="k">반복 횟수</span><input type="number" id="pomo-rounds" min="1" max="12"></label>
-  </section>
-
-  <section>
-    <h2>메시지</h2>
-    <label><span class="k">고정 메시지 (머리 위에 계속)</span></label>
-    <input type="text" id="pin" style="width:100%" maxlength="60" placeholder="잊지 말 것: …">
-    <h2 style="margin-top:12px">시간 알림</h2>
-    <div id="reminders"></div>
-    <div class="row" style="margin-top:6px">
-      <input type="time" id="rem-time">
-      <input type="text" id="rem-msg" placeholder="알림 내용" style="flex:1">
-      <button class="ghost" id="rem-add">추가</button>
-    </div>
-  </section>
-
-  <section>
-    <h2>기타</h2>
-    <label><span class="k">로그인할 때 자동 실행</span><input type="checkbox" id="launchAtLogin"></label>
-    <label><span class="k">빼꼼 모드 (화면 끝에서 지켜보기)</span><input type="checkbox" id="peek"></label>
-    <div class="hint">
-      AI 에이전트 연동: 작업 시작 시 <code>http://127.0.0.1:37421/thinking</code>,
-      끝나면 <code>/done</code> 으로 요청 한 번만 보내면 수다리가 같이 고민하고 점프해요.
-      Claude Code 훅 예시는 README.md 에 있어요.
-    </div>
-  </section>
-
-  <div class="row" style="margin-top:4px">
-    <button id="close">닫기</button>
-    <button class="ghost" id="reset">기본값으로</button>
-    <button class="ghost" id="hi">인사시키기</button>
-  </div>
-
-  <script src="../assets/atlas.js"></script>
-  <script src="sprite.js"></script>
-  <script src="settings.js"></script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>Sudari</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="settings">
+    <main class="page">
+      <header class="masthead">
+        <div>
+          <div class="eyebrow">SUDARI · 2.0</div>
+          <h1>⚙ <span data-i18n="settings"></span></h1>
+          <p class="muted" data-i18n="welcome"></p>
+          <p class="saved">✓ <span data-i18n="saved"></span></p>
+        </div>
+        <canvas class="mascot" id="prev" width="240" height="240"></canvas>
+      </header>
+      <section>
+        <h2>🌐 <span data-i18n="language"></span></h2>
+        <div class="setting-row">
+          <label for="language"
+            >🌐 <span data-i18n="language"></span
+            ><span class="hint" data-i18n="languageHint"></span></label
+          ><select id="language"></select>
+        </div>
+      </section>
+      <section>
+        <h2>🦦 <span data-i18n="appearance"></span></h2>
+        <div class="setting-row">
+          <label for="name"
+            >♡ <span data-i18n="name"></span
+            ><span class="hint" data-i18n="nameHint"></span></label
+          ><input id="name" type="text" maxlength="32" />
+        </div>
+        <div class="setting-row">
+          <label for="baseColor">🎨 <span data-i18n="color"></span></label
+          ><input id="baseColor" type="color" />
+        </div>
+        <div id="swatches" class="swatches"></div>
+        <div class="setting-row">
+          <label for="pattern">✿ <span data-i18n="pattern"></span></label
+          ><select id="pattern"></select>
+        </div>
+        <div class="setting-row">
+          <label for="scale"
+            >↔ <span data-i18n="size"></span
+            ><span class="hint" data-i18n="fitHint"></span></label
+          ><select id="scale"></select>
+        </div>
+      </section>
+      <section>
+        <h2>✨ <span data-i18n="reactions"></span></h2>
+        <div class="setting-row">
+          <label for="r-mouse">↖ <span data-i18n="mouse"></span></label
+          ><input id="r-mouse" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="r-keyboard">⌨ <span data-i18n="keyboard"></span></label
+          ><input id="r-keyboard" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="r-scroll">↕ <span data-i18n="scroll"></span></label
+          ><input id="r-scroll" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="r-pet">♡ <span data-i18n="pet"></span></label
+          ><input id="r-pet" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="volume">♪ <span data-i18n="volume"></span></label
+          ><input id="volume" type="range" min="0" max="1" step="0.05" />
+        </div>
+        <div class="setting-row">
+          <label for="muted">🔇 <span data-i18n="muted"></span></label
+          ><input id="muted" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="sleepAfterMin">☾ <span data-i18n="sleep"></span></label
+          ><input id="sleepAfterMin" type="number" min="1" max="120" />
+        </div>
+        <div class="setting-row">
+          <label for="ambient-on">✨ <span data-i18n="ambient"></span></label
+          ><input id="ambient-on" type="checkbox" />
+        </div>
+      </section>
+      <section>
+        <h2>🐚 <span data-i18n="timer"></span></h2>
+        <div class="setting-row">
+          <label for="pomo-on">⏱ <span data-i18n="timer"></span></label
+          ><input id="pomo-on" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="pomo-focus">◎ <span data-i18n="focus"></span><span class="hint" data-i18n="minutes"></span></label
+          ><input id="pomo-focus" type="number" min="5" max="180" />
+        </div>
+        <div class="setting-row">
+          <label for="pomo-break">☕ <span data-i18n="break"></span><span class="hint" data-i18n="minutes"></span></label
+          ><input id="pomo-break" type="number" min="1" max="60" />
+        </div>
+        <div class="setting-row">
+          <label for="pomo-rounds">↻ <span data-i18n="rounds"></span></label
+          ><input id="pomo-rounds" type="number" min="1" max="12" />
+        </div>
+      </section>
+      <section>
+        <h2>🔔 <span data-i18n="reminders"></span></h2>
+        <div class="setting-row">
+          <label for="stretch-on">🙆 <span data-i18n="stretch"></span></label
+          ><input id="stretch-on" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="stretch-min">◷ <span data-i18n="interval"></span></label
+          ><input id="stretch-min" type="number" min="5" max="600" />
+        </div>
+        <div class="setting-row">
+          <label for="water-on">💧 <span data-i18n="water"></span></label
+          ><input id="water-on" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="water-min">◷ <span data-i18n="interval"></span></label
+          ><input id="water-min" type="number" min="5" max="600" />
+        </div>
+        <div class="setting-row">
+          <label for="aff-on">💗 <span data-i18n="affection"></span></label
+          ><input id="aff-on" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="aff-min">◷ <span data-i18n="interval"></span></label
+          ><input id="aff-min" type="number" min="5" max="600" />
+        </div>
+        <div class="setting-row">
+          <label for="meal-breakfast"
+            >🌅 <span data-i18n="breakfast"></span></label
+          ><input id="meal-breakfast" type="time" />
+        </div>
+        <div class="setting-row">
+          <label for="meal-lunch">☀ <span data-i18n="lunch"></span></label
+          ><input id="meal-lunch" type="time" />
+        </div>
+        <div class="setting-row">
+          <label for="meal-dinner">🌙 <span data-i18n="dinner"></span></label
+          ><input id="meal-dinner" type="time" />
+        </div>
+        <p class="hint" data-i18n="mealHint"></p>
+      </section>
+      <section>
+        <h2>💬 <span data-i18n="messages"></span></h2>
+        <div class="setting-row">
+          <label for="pin">📌 <span data-i18n="pin"></span></label
+          ><input id="pin" type="text" maxlength="120" />
+        </div>
+        <div id="reminders"></div>
+        <div class="rem">
+          <input
+            id="rem-time"
+            type="time"
+            value="14:30"
+            data-i18n-title="reminders"
+          /><input
+            id="rem-msg"
+            type="text"
+            maxlength="120"
+            data-i18n-placeholder="reminderText"
+          /><button id="rem-add" class="ui-button">
+            ＋ <span data-i18n="add"></span>
+          </button>
+        </div>
+      </section>
+      <section>
+        <h2>⚙ <span data-i18n="system"></span></h2>
+        <div class="setting-row">
+          <label for="launchAtLogin"
+            >↗ <span data-i18n="launchAtLogin"></span></label
+          ><input id="launchAtLogin" type="checkbox" />
+        </div>
+        <div class="setting-row">
+          <label for="peek">🫣 <span data-i18n="peek"></span></label
+          ><input id="peek" type="checkbox" />
+        </div>
+      </section>
+      <footer class="footer">
+        <button id="reset" class="ui-button">
+          ↺ <span data-i18n="reset"></span></button
+        ><button id="hi" class="ui-button">
+          👋 <span data-i18n="wave"></span></button
+        ><button id="close" class="ui-button primary">
+          ✓ <span data-i18n="close"></span>
+        </button>
+      </footer>
+    </main>
+    <script src="../assets/atlas.js"></script>
+    <script src="locales.js"></script>
+    <script src="i18n.js"></script>
+    <script src="preferences.js"></script>
+    <script src="sprite.js"></script>
+    <script src="preview-api.js"></script>
+    <script src="settings.js"></script>
+  </body>
 </html>
