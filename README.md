@@ -22,6 +22,27 @@ It follows your cursor, kneads while you type, and keeps you company through one
 | Mac · Apple Silicon (M series) | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-arm64.dmg) |
 | Mac · Intel | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-x64.dmg) |
 
+### 🧭 Which file should I download?
+
+**Choose just one file for your computer.** For a first install, pick **Setup.exe** on Windows or the **.dmg** matching your Mac's chip.
+
+| Your computer / preference | File to choose under Assets | How to use it |
+| :--- | :--- | :--- |
+| Windows 10/11 PC with an Intel or AMD **x64** processor | **Sudari-2.0.1-Setup.exe** ⭐ Recommended | Run it and follow the installation steps. |
+| The same Windows PC, without an installation step | **Sudari-2.0.1-Portable.exe** | Save it in a folder and run it directly. |
+| MacBook, iMac, Mac mini, Mac Studio, etc. with an **Apple M-series** chip | **Sudari-2.0.1-mac-arm64.dmg** | Open it and drag Sudari into Applications. |
+| Mac with an **Intel** processor | **Sudari-2.0.1-mac-x64.dmg** | Open it and drag Sudari into Applications. |
+
+**Check your Mac:** open ** → About This Mac**. If it says **Chip: Apple M…**, choose `mac-arm64`. If it says **Processor: Intel…**, choose `mac-x64`. The name “MacBook Air” or “MacBook Pro” alone does not identify the chip. [Apple's guide](https://support.apple.com/en-au/116943)
+
+**Check Windows:** open **Settings → System → About → Device specifications → System type** and look for **64-bit operating system, x64-based processor**. The current Windows build is for x64; there are no Windows ARM/Snapdragon, 32-bit or Linux builds. [Microsoft's guide](https://support.microsoft.com/en-US/Windows/Experience/find-information-about-your-windows-device)
+
+**What are the other files?**
+
+- **mac-arm64.zip / mac-x64.zip:** the same Mac app in a ZIP archive. Use this as an alternative to DMG: extract it and move Sudari into Applications. You only need one format.
+- **SHA256SUMS.txt:** checksums for verifying downloaded files. This is not an installer.
+- **Source code (zip) / Source code (tar.gz):** source files for development. To install and use Sudari, choose an EXE or DMG above.
+
 macOS 12 or later. ZIP alternatives and SHA-256 checksums are on the [release page](https://github.com/seojaeohcode/SUDARI/releases/latest). No Node.js or Python needed to use the app. Choose from 12 languages during setup or first launch; English is the default. Change it anytime in Settings.
 
 **Windows:** run the installer or portable EXE. Builds are unsigned, so SmartScreen may ask for confirmation. Check that your download comes from this repository before choosing **More info → Run anyway**.
@@ -96,4 +117,4 @@ Node.js 22.12+ required. Build on Windows with `npm run dist`; on macOS with `np
 
 The sprite generator, artwork and code are all included under [Apache-2.0](LICENSE). [Contributions](CONTRIBUTING.md), [bug reports](https://github.com/seojaeohcode/SUDARI/issues/new/choose), translations and new otter ideas are welcome.
 
-<p align="center"><b>If Sudari makes your day a little softer, leave a ⭐ and help another otter find a home.</b><br><sub>Inspired by the pixel cat at comnyang.com. Original otter artwork and implementation.</sub></p>
+<p align="center"><b>If Sudari makes your day a little softer, leave a ⭐ and help another otter find a home.</b></p>

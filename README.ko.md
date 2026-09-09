@@ -25,6 +25,27 @@
 | **Mac · Apple Silicon** (M 시리즈) | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-arm64.dmg) |
 | **Mac · Intel** | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-x64.dmg) |
 
+### 🧭 내 컴퓨터는 어떤 파일을 받으면 되나요?
+
+**아래에서 내 컴퓨터에 맞는 파일 하나만 받으면 돼요.** 처음이라면 Windows는 **Setup.exe**, Mac은 칩 종류에 맞는 **.dmg**를 고르세요.
+
+| 내 컴퓨터 / 사용 방식 | 릴리즈에서 고를 파일 | 이렇게 사용해요 |
+| :--- | :--- | :--- |
+| Windows 10·11, Intel 또는 AMD **x64** PC | **Sudari-2.0.1-Setup.exe** ⭐ 추천 | 실행하고 설치 안내를 따라가세요. |
+| 같은 Windows PC에서 설치 없이 실행하고 싶어요 | **Sudari-2.0.1-Portable.exe** | 원하는 폴더에 저장한 뒤 실행하세요. 별도 설치 과정이 없어요. |
+| **Apple M 시리즈** MacBook·iMac·Mac mini·Mac Studio 등 | **Sudari-2.0.1-mac-arm64.dmg** | 열어서 Sudari를 응용 프로그램 폴더로 끌어 놓으세요. |
+| **Intel** 프로세서가 들어간 Mac | **Sudari-2.0.1-mac-x64.dmg** | 열어서 Sudari를 응용 프로그램 폴더로 끌어 놓으세요. |
+
+**Mac 칩 확인:** 왼쪽 위 ** → 이 Mac에 관하여**를 여세요. **칩: Apple M…**이라고 나오면 `mac-arm64`, **프로세서: Intel…**이라고 나오면 `mac-x64`를 받으면 돼요. MacBook Air·Pro라는 제품 이름만으로는 구분할 수 없어요. [Apple 확인 안내](https://support.apple.com/en-au/116943)
+
+**Windows 확인:** **설정 → 시스템 → 정보 → 장치 사양 → 시스템 종류**에서 **64비트 운영 체제, x64 기반 프로세서**인지 확인하세요. 현재 Windows 빌드는 x64용이며, Windows ARM/Snapdragon·32비트·Linux용 빌드는 제공하지 않아요. [Microsoft 확인 안내](https://support.microsoft.com/en-US/Windows/Experience/find-information-about-your-windows-device)
+
+**나머지 파일은 뭐예요?**
+
+- **mac-arm64.zip / mac-x64.zip:** 같은 Mac 앱의 압축 파일이에요. DMG 대신 사용할 때만 받고, 압축을 풀어 Sudari 앱을 응용 프로그램 폴더로 옮기세요. DMG와 ZIP을 둘 다 받을 필요는 없어요.
+- **SHA256SUMS.txt:** 다운로드한 파일이 온전한지 확인할 때 쓰는 체크섬 목록이에요. 설치 파일이 아니에요.
+- **Source code (zip) / Source code (tar.gz):** 개발용 소스 코드예요. 수다리를 설치해서 쓰려면 위의 EXE 또는 DMG를 받으세요.
+
 Mac은 **macOS 12 이상**을 지원해요. ZIP과 파일 확인용 SHA-256은 [릴리즈 페이지](https://github.com/seojaeohcode/SUDARI/releases/latest)에 있어요. 실행할 때 Node.js나 Python은 필요 없어요.
 
 **Windows:** 설치형 또는 무설치 파일을 실행해요. 코드 서명이 없는 개인 배포 앱이라 SmartScreen 안내가 뜰 수 있어요. 이 저장소에서 받은 파일인지 확인한 뒤 `추가 정보 → 실행`을 선택하세요.
@@ -141,5 +162,3 @@ Node.js **22.12 이상**이 필요해요. 스프라이트를 다시 만들 때�
 새 동작 아이디어, 번역, 작은 수정도 환영해요. 한국어와 영어 편한 쪽으로 이야기해 주세요.
 
 <p align="center"><b>오늘 수다리 때문에 한 번 웃었다면, ⭐로 다른 친구에게도 소개해 주세요.</b><br><sub>작은 수달이 더 많은 책상에 놀러 갈 수 있어요.</sub></p>
-
-<p align="center"><sub>콤냥이(comnyang.com)의 픽셀 고양이에서 영감을 받아, 수달 그림과 코드를 처음부터 만들었어요.</sub></p>
