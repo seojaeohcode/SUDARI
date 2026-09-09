@@ -103,30 +103,20 @@
     "mac": {
       "icon": "build/icon.png",
       "category": "public.app-category.entertainment",
-      "identity": null,
-      "hardenedRuntime": false,
+      "identity": "-",
+      "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
+        "dmg",
+        "zip"
       ],
       "artifactName": "Sudari-${version}-mac-${arch}.${ext}",
       "extendInfo": {
         "LSUIElement": true,
         "NSAppleEventsUsageDescription": "Sudari reacts to activity beside you."
-      }
+      },
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "dmg": {
       "artifactName": "Sudari-${version}-mac-${arch}.${ext}",

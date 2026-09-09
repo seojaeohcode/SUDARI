@@ -54,8 +54,19 @@ jobs:
         run: npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          CSC_FOR_PULL_REQUEST: "true"
       - name: Inspect packaged resources
         run: node tools/check-package.js ${{ matrix.platform }} ${{ matrix.arch }}
+      - name: Audit the previous published Mac signature
+        if: matrix.platform == 'mac' && github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v2.0.1 --pattern 'Sudari-2.0.1-mac-${{ matrix.arch }}.zip' --dir legacy
+          node tools/check-mac-distribution.js --audit legacy/Sudari-2.0.1-mac-${{ matrix.arch }}.zip
+      - name: Verify Mac installers and launch their actual apps
+        if: matrix.platform == 'mac'
+        run: node tools/check-mac-distribution.js
       - uses: actions/upload-artifact@v4
         with:
           name: sudari-${{ matrix.platform }}-${{ matrix.arch }}
