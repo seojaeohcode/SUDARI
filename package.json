@@ -49,7 +49,11 @@
       "node_modules/uiohook-napi/**"
     ],
     "extraResources": [
-      "README.md"
+      "README.md",
+      "README.en.md",
+      "CONTRIBUTING.md",
+      "LICENSE",
+      "docs"
     ],
     "win": {
       "icon": "build/icon.ico",

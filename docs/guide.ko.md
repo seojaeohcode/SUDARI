@@ -36,7 +36,7 @@ Codex, Cursor 등 "작업 시작/종료에 명령 한 줄"을 걸 수 있는 도
 
 ## 🧩 어떻게 만들었나
 
-수달은 그림 파일을 하나하나 그린 게 아니라 **[tools/gen_sprites.py](../tools/gen_sprites.py) 가 파라미터로 굽는** 스프라이트예요.
+수달은 그림 파일을 하나하나 그린 게 아니라 **[tools/gen_sprites.py](https://github.com/seojaeohcode/SUDARI/blob/main/tools/gen_sprites.py) 가 파라미터로 굽는** 스프라이트예요.
 머리 크기·주둥이 위치·앞발 높이·꼬리 곡선 같은 값을 포즈마다 바꿔 17개 애니메이션 73프레임(72×64)을 만들어요.
 
 '귀여운 캐릭터' 규칙을 그대로 따랐어요 — 머리는 크고 둥글게, 눈은 얼굴 중간 아래에 멀리, 큰 눈동자에 하이라이트,

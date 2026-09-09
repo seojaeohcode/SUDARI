@@ -16,5 +16,8 @@ const native = platform === 'mac' ? `darwin-${arch}` : `win32-${arch}`;
 const prebuild = path.join(resources, 'app.asar.unpacked/node_modules/uiohook-napi/prebuilds', native);
 assert.ok(fs.readdirSync(prebuild).some((name) => name.endsWith('.node')), `Missing ${native} input hook`);
 if (platform === 'win') assert.ok(fs.existsSync(path.join(resources, 'app.asar.unpacked/tools/input_hook.ps1')));
-assert.ok(fs.existsSync(path.join(resources, 'README.md')));
+for (const file of ['README.md', 'README.en.md', 'CONTRIBUTING.md', 'LICENSE',
+  'docs/banner.svg', 'docs/guide.ko.md', 'docs/releases/1.1.0.md', 'docs/reel.gif']) {
+  assert.ok(fs.existsSync(path.join(resources, file)), `Missing bundled documentation: ${file}`);
+}
 console.log(`PASS: packaged ${pkg.version}, ${platform}/${arch}, renderer, sprites, native input hook, README`);
