@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>수다리 스프라이트 랩</title>
+<style>
+  body { background: #191510; color: #e9dccb; font-family: "Malgun Gothic", sans-serif; padding: 18px; }
+  h1 { font-size: 16px; margin-bottom: 12px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cell { background: #241d17; border: 2px solid #3b2c22; padding: 6px; text-align: center; }
+  .cell canvas { image-rendering: pixelated; display: block; }
+  .cell b { font-size: 11px; color: #e7b978; display: block; margin-top: 4px; }
+  .bar { margin-bottom: 12px; font-size: 12px; }
+  input[type=color] { vertical-align: middle; }
+</style>
+</head>
+<body>
+  <h1>수다리 스프라이트 랩 — 런타임 눈/FX/틴트 검수</h1>
+  <div class="bar">
+    털 색 <input type="color" id="col" value="#925f3f">
+    무늬 <select id="pat">
+      <option value="plain">민무늬</option><option value="spots">점박이</option>
+      <option value="stripes">줄무늬</option><option value="blaze">이마</option>
+    </select>
+    시선 <input type="range" id="gaze" min="-1" max="1" step="0.05" value="0">
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <script src="../assets/atlas.js"></script>
+  <script src="../renderer/sprite.js"></script>
+  <script>
+  var S = window.Sudari, SC = 3, cells = [], sprite = null;
+  var names = Object.keys(window.SUDARI_ATLAS.anims);
+
+  function build() {
+    var grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    cells = names.map(function (n) {
+      var d = document.createElement('div'); d.className = 'cell';
+      var c = document.createElement('canvas');
+      c.width = 104 * SC; c.height = 96 * SC;
+      var b = document.createElement('b'); b.textContent = n;
+      d.appendChild(c); d.appendChild(b); grid.appendChild(d);
+      return { name: n, ctx: c.getContext('2d'), frame: 0, t: 0, blink: 2 + Math.random() * 3 };
+    });
+  }
+
+  function load(pattern) {
+    return S.Sprite.load('../assets', pattern, window.SUDARI_ATLAS, window.SUDARI_PALETTE)
+      .then(function (s) {
+        sprite = s;
+        sprite.recolor(S.derivePalette(document.getElementById('col').value));
+      });
+  }
+
+  var last = performance.now();
+  function loop() {
+    var t = performance.now(), dt = Math.min(0.05, (t - last) / 1000);
+    last = t;
+    var g = parseFloat(document.getElementById('gaze').value);
+    if (sprite) cells.forEach(function (c) {
+      var a = sprite.anim(c.name);
+      c.t += dt;
+      while (c.t >= 1 / a.fps) { c.t -= 1 / a.fps; c.frame = (c.frame + 1) % a.count; }
+      c.blink -= dt;
+      var lid = 0;
+      if (c.blink <= 0) { lid = 1; if (c.blink < -0.14) c.blink = 2 + Math.random() * 3; }
+      sprite.begin();
+      sprite.blitFrame(c.name, c.frame);
+      sprite.drawEyes(c.name, c.frame, {
+        gaze: [g * 1.7, 0], lid: c.name === 'sleep' ? 1 : lid,
+        happy: c.name === 'jump', wide: c.name === 'hunt' ? 0.5 : 0
+      });
+      var m = sprite.meta(c.name, c.frame);
+      var hx = m.head[0], hy = m.head[1], bx = m.belly[0], by = m.belly[1];
+      if (c.name === 'overheat') {
+        sprite.tint('#ff4d3d', 0.32);
+        sprite.blitFx(sprite.fx, 'steam', Math.floor(t / 130) % 3, hx - 8, hy - 14);
+        sprite.blitFx(sprite.fx, 'steam', Math.floor(t / 90) % 3, hx + 8, hy - 17);
+      }
+      if (c.name === 'sleep') sprite.blitFx(sprite.fx, 'zzz', Math.floor(t / 420) % 3, hx + 12, hy - 10);
+      if (c.name === 'think') sprite.blitFx(sprite.fx, 'mark', 0, hx + 13, hy - 12);
+      if (c.name === 'drink') sprite.blitFx(sprite.fx, 'ring', Math.floor(t / 260) % 3, hx + 2, hy + 15);
+      if (c.name === 'jump') sprite.blitFx(sprite.fx, 'spark', Math.floor(t / 150) % 3, hx + 12, hy - 14);
+      if (c.name === 'idle') sprite.blitFx(sprite.fx, 'heart', Math.floor(t / 300) % 3, hx + 13, hy - 14);
+      c.ctx.clearRect(0, 0, 104 * SC, 96 * SC);
+      sprite.present(c.ctx, 0, 0, SC, false);
+    });
+    requestAnimationFrame(loop);
+  }
+
+  document.getElementById('col').addEventListener('input', function () {
+    sprite.recolor(S.derivePalette(this.value));
+  });
+  document.getElementById('pat').addEventListener('change', function () { load(this.value); });
+
+  build();
+  load('plain').then(loop);
+  </script>
+</body>
+</html>

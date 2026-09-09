@@ -1,0 +1,291 @@
+﻿/* 수다리 — 데스크톱 펫 창은 완전 투명. UI는 픽셀 느낌으로 각지게. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+  font-family: "Galmuri11", "DungGeunMo", "Pretendard", "Malgun Gothic", sans-serif;
+}
+
+body.pet-window { pointer-events: none; }
+
+#pet {
+  position: absolute;
+  inset: 0;
+  z-index: 1;             /* 말풍선·타이머·패널(z-index 3)은 캔버스 위에 있어야 클릭이 닿는다 */
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  pointer-events: auto;   /* 창 자체는 클릭 통과, 캔버스 히트영역만 메인에서 열어준다 */
+}
+
+/* ---------- 말풍선 ---------- */
+.bubble, .pin, .timer {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  max-width: 240px;
+  padding: 6px 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: -0.2px;
+  text-align: center;
+  white-space: pre-wrap;
+  color: #2b2119;
+  background: #fff8ec;
+  border: 2px solid #33231a;
+  box-shadow: 3px 3px 0 rgba(51, 35, 26, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.bubble.show, .timer.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.bubble { bottom: 132px; }
+
+/* 말풍선 꼬리 (픽셀 계단) */
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  background: #fff8ec;
+  border-right: 2px solid #33231a;
+  border-bottom: 2px solid #33231a;
+  transform: rotate(45deg);
+}
+
+/* ---------- 고정 메시지 ---------- */
+.pin {
+  top: 6px;
+  bottom: auto;
+  font-size: 11px;
+  background: #ffe9a8;
+  opacity: 1;
+  display: none;
+}
+
+/* ---------- 집중 타이머: 수달이 든 것과 같은 가리비 ---------- */
+/* 바깥 래퍼: 잘라낸 조개 모양(안쪽 .shell) 둘레에 drop-shadow 4방향으로 2px 외곽선을 만든다 */
+.timer {
+  bottom: 108px;
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  pointer-events: auto;
+  cursor: pointer;
+  filter: drop-shadow(2px 0 0 #3b2419) drop-shadow(-2px 0 0 #3b2419)
+          drop-shadow(0 2px 0 #3b2419) drop-shadow(0 -2px 0 #3b2419);
+}
+
+.timer .shell {
+  min-width: 86px;
+  padding: 15px 14px 9px;
+  text-align: center;
+  color: #3b2419;
+  font-size: 11px;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  /* 경첩(아래 가운데)에서 방사형으로 퍼지는 골 + 위쪽 하이라이트 */
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 42%),
+    repeating-conic-gradient(from -78deg at 50% 104%, #cdd7ed 0 12deg, #8e9dc9 12deg 14.5deg);
+  /* 위쪽 다섯 결(lobe)이 둥글게 물결치는 부채꼴 */
+  clip-path: polygon(
+    0% 24%, 4% 12%, 10% 5%, 16% 12%, 20% 24%,
+    24% 12%, 30% 5%, 36% 12%, 40% 24%,
+    44% 12%, 50% 5%, 56% 12%, 60% 24%,
+    64% 12%, 70% 5%, 76% 12%, 80% 24%,
+    84% 12%, 90% 5%, 96% 12%, 100% 24%,
+    100% 54%, 96% 70%, 88% 84%, 76% 94%, 62% 100%, 38% 100%, 24% 94%, 12% 84%, 4% 70%, 0% 54%);
+}
+
+.timer b { display: block; font-size: 14px; letter-spacing: 0.5px; }
+.timer small { display: block; font-size: 9px; color: #4a3a5a; margin-top: 1px; }
+
+/* 경첩 — 래퍼의 필터 덕에 자동으로 외곽선이 생긴다 */
+.timer::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 10px;
+  height: 7px;
+  margin-left: -5px;
+  background: #8e9dc9;
+  border-radius: 0 0 3px 3px;
+}
+
+.timer.break .shell {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 42%),
+    repeating-conic-gradient(from -78deg at 50% 104%, #c6ecf4 0 12deg, #6fb3cf 12deg 14.5deg);
+}
+.timer.break::after { background: #6fb3cf; }
+.timer.break small { color: #2f6b7a; }
+
+/* ---------- 타이머 설정 패널 ---------- */
+.tpanel {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 110px;
+  display: none;
+  padding: 8px 10px 9px;
+  color: #2b2119;
+  background: #fff8ec;
+  border: 2px solid #33231a;
+  box-shadow: 3px 3px 0 rgba(51, 35, 26, 0.28);
+  font-size: 12px;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.tpanel.show { display: block; }
+.tpanel .tp-title { font-size: 11px; color: #8d6a4a; margin-bottom: 6px; letter-spacing: 0.3px; }
+.tpanel .tp-row { display: flex; align-items: center; gap: 5px; margin: 4px 0; }
+.tpanel .tp-row span { width: 26px; color: #6b4a30; }
+.tpanel .tp-row b { min-width: 24px; text-align: center; font-size: 13px; }
+.tpanel .tp-row i { font-style: normal; color: #8d7a67; margin-right: 2px; }
+
+.tpanel button {
+  font: inherit;
+  font-size: 12px;
+  min-width: 22px;
+  padding: 2px 6px;
+  color: #2b2119;
+  background: #ffe9a8;
+  border: 2px solid #33231a;
+  box-shadow: 2px 2px 0 rgba(51, 35, 26, 0.35);
+  cursor: pointer;
+}
+
+.tpanel button:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(51, 35, 26, 0.35); }
+.tpanel .tp-actions { margin-top: 7px; gap: 6px; }
+.tpanel .tp-actions button { padding: 3px 9px; background: #f2e6d4; }
+.tpanel .tp-actions button.primary { background: #cfd9e3; }
+
+/* ---------- 설정 창 ---------- */
+body.settings {
+  pointer-events: auto;
+  background: #211a15;
+  color: #f0e4d4;
+  padding: 16px 18px 22px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+body.settings h1 {
+  font-size: 15px;
+  margin-bottom: 2px;
+  letter-spacing: 0.4px;
+}
+
+body.settings .sub { font-size: 11px; color: #a2907c; margin-bottom: 14px; }
+
+body.settings section {
+  border: 2px solid #3b2c22;
+  background: #2a211a;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+body.settings h2 {
+  font-size: 12px;
+  color: #e7b978;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+body.settings label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  font-size: 12px;
+}
+
+body.settings label span.k { flex: 1; color: #d7c7b4; }
+
+body.settings input[type="text"],
+body.settings input[type="number"],
+body.settings input[type="time"],
+body.settings select {
+  width: 108px;
+  padding: 4px 6px;
+  font: inherit;
+  font-size: 12px;
+  color: #fff8ec;
+  background: #1a1410;
+  border: 2px solid #4a382c;
+}
+
+body.settings input[type="color"] {
+  width: 44px;
+  height: 26px;
+  padding: 0;
+  background: #1a1410;
+  border: 2px solid #4a382c;
+}
+
+body.settings input[type="range"] { width: 108px; }
+
+body.settings .swatches { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 2px; }
+
+body.settings .sw {
+  width: 26px;
+  height: 26px;
+  border: 2px solid #4a382c;
+  cursor: pointer;
+}
+
+body.settings .sw.on { border-color: #ffd479; }
+
+body.settings .row { display: flex; gap: 8px; align-items: center; }
+
+body.settings button {
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 11px;
+  color: #2b2119;
+  background: #e7b978;
+  border: 2px solid #33231a;
+  box-shadow: 2px 2px 0 #14100c;
+  cursor: pointer;
+}
+
+body.settings button.ghost { background: #3b2c22; color: #e9dccb; }
+body.settings button:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #14100c; }
+
+body.settings .preview {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 170px;
+  background:
+    repeating-linear-gradient(45deg, #241d17 0 8px, #2a221b 8px 16px);
+  border: 2px solid #3b2c22;
+  margin-bottom: 10px;
+}
+
+body.settings .preview canvas { image-rendering: pixelated; }
+
+body.settings .rem { display: flex; gap: 6px; align-items: center; margin: 4px 0; }
+body.settings .rem input[type="text"] { flex: 1; width: auto; }
+body.settings .rem button { padding: 3px 7px; background: #6b4a30; color: #f0e4d4; }
+body.settings .hint { font-size: 10px; color: #8d7a67; margin-top: 6px; line-height: 1.5; }

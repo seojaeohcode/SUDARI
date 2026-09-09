@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'">
+<title>수다리 설정</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="settings">
+  <h1>수다리 설정 🦦</h1>
+  <div class="sub">내 컴퓨터에 사는 픽셀 수달</div>
+
+  <div class="preview"><canvas id="prev" width="270" height="160"></canvas></div>
+
+  <section>
+    <h2>내 수달</h2>
+    <label><span class="k">이름 (수달이 불러줄 이름)</span>
+      <input type="text" id="name" placeholder="예: 서코" maxlength="12"></label>
+    <label><span class="k">털 색</span><input type="color" id="baseColor"></label>
+    <div class="swatches" id="swatches"></div>
+    <label><span class="k">무늬</span>
+      <select id="pattern">
+        <option value="plain">민무늬</option>
+        <option value="spots">점박이</option>
+        <option value="stripes">줄무늬</option>
+        <option value="blaze">이마 무늬</option>
+      </select></label>
+    <label><span class="k">크기</span>
+      <select id="scale">
+        <option value="2">2배</option>
+        <option value="3">3배</option>
+        <option value="4">4배</option>
+        <option value="5">5배</option>
+      </select></label>
+  </section>
+
+  <section>
+    <h2>반응</h2>
+    <label><span class="k">마우스 (시선 추적·사냥)</span><input type="checkbox" id="r-mouse"></label>
+    <label><span class="k">키보드 (꾹꾹이·과열)</span><input type="checkbox" id="r-keyboard"></label>
+    <label><span class="k">스크롤 (조개 까기)</span><input type="checkbox" id="r-scroll"></label>
+    <label><span class="k">쓰다듬기 (고롱고롱)</span><input type="checkbox" id="r-pet"></label>
+    <label><span class="k">소리 크기</span><input type="range" id="volume" min="0" max="1" step="0.05"></label>
+    <label><span class="k">음소거</span><input type="checkbox" id="muted"></label>
+    <label><span class="k">잠들기까지 (분)</span><input type="number" id="sleepAfterMin" min="1" max="120"></label>
+  </section>
+
+  <section>
+    <h2>알림</h2>
+    <label><span class="k">스트레칭 알림</span><input type="checkbox" id="stretch-on"></label>
+    <label><span class="k">주기 (분)</span><input type="number" id="stretch-min" min="5" max="600"></label>
+    <label><span class="k">물 마시기 알림</span><input type="checkbox" id="water-on"></label>
+    <label><span class="k">주기 (분)</span><input type="number" id="water-min" min="5" max="600"></label>
+  </section>
+
+  <section>
+    <h2>식사 시간 — "밥 먹으러 가자!"</h2>
+    <label><span class="k">아침</span><input type="time" id="meal-breakfast"></label>
+    <label><span class="k">점심</span><input type="time" id="meal-lunch"></label>
+    <label><span class="k">저녁</span><input type="time" id="meal-dinner"></label>
+    <div class="hint">비워두면 그 끼니는 알리지 않아요. 시간이 되면 수달이 서서 새우를 들고 밥 먹으러 가자고 해요.</div>
+  </section>
+
+  <section>
+    <h2>애정 표현 · 혼자 놀기</h2>
+    <label><span class="k">가끔 사랑한다고 말해주기 💕</span><input type="checkbox" id="aff-on"></label>
+    <label><span class="k">대략 몇 분마다</span><input type="number" id="aff-min" min="5" max="600"></label>
+    <label><span class="k">심심하면 혼자 놀기 (조개 까기·배영·기지개)</span><input type="checkbox" id="ambient-on"></label>
+  </section>
+
+  <section>
+    <h2>집중 타이머 (뽀모도로)</h2>
+    <label><span class="k">사용</span><input type="checkbox" id="pomo-on"></label>
+    <label><span class="k">집중 (분)</span><input type="number" id="pomo-focus" min="1" max="180"></label>
+    <label><span class="k">휴식 (분)</span><input type="number" id="pomo-break" min="1" max="60"></label>
+    <label><span class="k">반복 횟수</span><input type="number" id="pomo-rounds" min="1" max="12"></label>
+  </section>
+
+  <section>
+    <h2>메시지</h2>
+    <label><span class="k">고정 메시지 (머리 위에 계속)</span></label>
+    <input type="text" id="pin" style="width:100%" maxlength="60" placeholder="잊지 말 것: …">
+    <h2 style="margin-top:12px">시간 알림</h2>
+    <div id="reminders"></div>
+    <div class="row" style="margin-top:6px">
+      <input type="time" id="rem-time">
+      <input type="text" id="rem-msg" placeholder="알림 내용" style="flex:1">
+      <button class="ghost" id="rem-add">추가</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>기타</h2>
+    <label><span class="k">로그인할 때 자동 실행</span><input type="checkbox" id="launchAtLogin"></label>
+    <label><span class="k">빼꼼 모드 (화면 끝에서 지켜보기)</span><input type="checkbox" id="peek"></label>
+    <div class="hint">
+      AI 에이전트 연동: 작업 시작 시 <code>http://127.0.0.1:37421/thinking</code>,
+      끝나면 <code>/done</code> 으로 요청 한 번만 보내면 수다리가 같이 고민하고 점프해요.
+      Claude Code 훅 예시는 README.md 에 있어요.
+    </div>
+  </section>
+
+  <div class="row" style="margin-top:4px">
+    <button id="close">닫기</button>
+    <button class="ghost" id="reset">기본값으로</button>
+    <button class="ghost" id="hi">인사시키기</button>
+  </div>
+
+  <script src="../assets/atlas.js"></script>
+  <script src="sprite.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

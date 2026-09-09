@@ -1,0 +1,63 @@
+{
+  "name": "sudari",
+  "version": "1.0.0",
+  "description": "수다리 - 내 컴퓨터에 사는 픽셀 수달 (Sudari, a pixel otter that lives on your desktop)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "sprites": "python tools/gen_sprites.py",
+    "icon": "python tools/make_icon.py",
+    "pack": "electron-builder --win --dir",
+    "dist": "electron-builder --win"
+  },
+  "author": "seojaeohcode",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seojaeohcode/SUDARI.git"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "kr.sudari.desktop-otter",
+    "productName": "Sudari",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**",
+      "assets/**",
+      "!assets/_*.png",
+      "tools/input_hook.ps1",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "tools/**"
+    ],
+    "extraResources": [
+      "README.md"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "수다리",
+      "artifactName": "Sudari-${version}-Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "Sudari-${version}-Portable.${ext}"
+    }
+  }
+}

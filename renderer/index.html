@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'">
+<title>수다리</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="pet-window">
+  <div id="pin" class="pin"></div>
+  <div id="bubble" class="bubble"></div>
+  <div id="timer" class="timer" title="클릭하면 시간을 바꿀 수 있어요"><div class="shell"></div></div>
+  <div id="timerpanel" class="tpanel">
+    <div class="tp-title">집중 타이머 🐚</div>
+    <div class="tp-row"><span>집중</span>
+      <button data-k="focusMin" data-d="-5">−</button><b id="tp-focus">25</b><i>분</i><button data-k="focusMin" data-d="5">+</button></div>
+    <div class="tp-row"><span>휴식</span>
+      <button data-k="breakMin" data-d="-1">−</button><b id="tp-break">5</b><i>분</i><button data-k="breakMin" data-d="1">+</button></div>
+    <div class="tp-row"><span>반복</span>
+      <button data-k="rounds" data-d="-1">−</button><b id="tp-rounds">4</b><i>회</i><button data-k="rounds" data-d="1">+</button></div>
+    <div class="tp-row tp-actions">
+      <button id="tp-start" class="primary">▶ 시작</button>
+      <button id="tp-stop">■ 중단</button>
+      <button id="tp-close">닫기</button>
+    </div>
+  </div>
+  <canvas id="pet"></canvas>
+
+  <script src="../assets/atlas.js"></script>
+  <script src="sprite.js"></script>
+  <script src="audio.js"></script>
+  <script src="pet.js"></script>
+  <script src="bridge-electron.js"></script>
+  <script src="boot.js"></script>
+</body>
+</html>

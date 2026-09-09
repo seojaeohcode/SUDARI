@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>수다리 데모 — 브라우저에서 미리보기</title>
+<link rel="stylesheet" href="../renderer/style.css">
+<style>
+  html, body { pointer-events: auto; background: #14110e; color: #e9dccb; }
+  body { font-family: "Pretendard", "Malgun Gothic", sans-serif; padding: 22px 26px; }
+  h1 { font-size: 18px; margin-bottom: 4px; }
+  .sub { font-size: 12px; color: #9b8874; margin-bottom: 16px; }
+  .panel { display: flex; gap: 20px; flex-wrap: wrap; }
+  .card {
+    background: #1e1a15; border: 2px solid #3b2c22; padding: 14px 16px;
+    min-width: 260px; max-width: 420px;
+  }
+  .card h2 { font-size: 12px; color: #e7b978; margin-bottom: 8px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 6px; }
+  button {
+    font: inherit; font-size: 12px; padding: 5px 10px; cursor: pointer;
+    color: #2b2119; background: #e7b978; border: 2px solid #33231a; box-shadow: 2px 2px 0 #0d0b09;
+  }
+  button.ghost { background: #3b2c22; color: #e9dccb; }
+  button:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #0d0b09; }
+  textarea {
+    width: 100%; height: 88px; margin-top: 6px; padding: 8px; font: inherit; font-size: 12px;
+    color: #f4ecdf; background: #14100c; border: 2px solid #4a382c; resize: none;
+  }
+  .scroller { height: 110px; overflow-y: scroll; border: 2px solid #4a382c; background: #14100c; padding: 8px; font-size: 12px; line-height: 1.9; color: #8d7a67; }
+  .tips { font-size: 11px; color: #8d7a67; line-height: 1.7; margin-top: 8px; }
+  #stage { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+  #petbox { position: absolute; width: 320px; height: 300px; pointer-events: none; }
+  #petbox canvas { pointer-events: auto; }
+  input[type="color"] { width: 42px; height: 26px; padding: 0; background: #14100c; border: 2px solid #4a382c; }
+  label { font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin-right: 10px; }
+</style>
+</head>
+<body>
+  <h1>수다리 🦦 브라우저 데모</h1>
+  <div class="sub">데스크톱 앱과 같은 스프라이트·같은 행동 엔진입니다. 수달을 <b>드래그</b>하고 <b>머리를 문질러</b> 보세요.</div>
+
+  <div class="panel">
+    <div class="card">
+      <h2>동작 시켜보기</h2>
+      <div class="btns">
+        <button data-cmd="wave">인사</button>
+        <button data-cmd="stretch">스트레칭</button>
+        <button data-cmd="water">물 마시기</button>
+        <button data-cmd="jump">신남 점프</button>
+        <button data-cmd="float">배영</button>
+        <button data-cmd="sleep">잠자기</button>
+        <button data-cmd="love">사랑해 💕</button>
+        <button data-cmd="meal">밥 시간</button>
+        <button data-cmd="crack">조개 까기</button>
+        <button data-cmd="fireworks">폭죽 🎆</button>
+        <button data-cmd="snack">새우 주기</button>
+        <button class="ghost" data-cmd="pomodoro-toggle">뽀모도로</button>
+        <button class="ghost" data-cmd="peek-toggle">빼꼼 모드</button>
+      </div>
+      <h2 style="margin-top:12px">AI 에이전트 상태</h2>
+      <div class="btns">
+        <button class="ghost" id="ai-think">생각 중</button>
+        <button class="ghost" id="ai-done">작업 완료</button>
+      </div>
+      <div class="tips">데스크톱 앱에서는 Claude Code 훅이 이 신호를 자동으로 보냅니다.</div>
+    </div>
+
+    <div class="card">
+      <h2>타이핑 반응 (꾹꾹이 · 과열)</h2>
+      <textarea placeholder="여기에 아무거나 타이핑해보세요. 빠르게 치면 머리에서 김이 납니다."></textarea>
+      <h2 style="margin-top:12px">스크롤 반응 (조개 까기)</h2>
+      <div class="scroller">
+        스크롤을 굴리면 수달이 배 위에 돌을 올리고 조개를 깝니다.<br>
+        ⬇︎<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>ㆍ<br>다 왔습니다!
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>커스터마이징</h2>
+      <label>털 색 <input type="color" id="color" value="#925f3f"></label>
+      <label>무늬
+        <select id="pattern">
+          <option value="plain">민무늬</option>
+          <option value="spots">점박이</option>
+          <option value="stripes">줄무늬</option>
+          <option value="blaze">이마 무늬</option>
+        </select>
+      </label>
+      <div class="btns" style="margin-top:8px">
+        <button class="ghost" data-color="#6b4a3c">진갈색수달</button>
+        <button class="ghost" data-color="#4a4f57">검은수달</button>
+        <button class="ghost" data-color="#c9a06a">금빛수달</button>
+        <button class="ghost" data-color="#e6dccb">흰수달</button>
+        <button class="ghost" data-color="#d9b8c4">분홍수달</button>
+      </div>
+      <label style="margin-top:10px">크기
+        <select id="scale"><option selected>2</option><option>3</option><option>4</option><option>5</option></select>
+      </label>
+      <label>이름 <input type="text" id="name" placeholder="내 이름" style="width:90px"></label>
+      <div class="tips">
+        데스크톱 앱에서는 이 설정이 트레이 → 설정 창에 있고, 파일로 저장됩니다.
+      </div>
+    </div>
+  </div>
+
+  <div id="stage">
+    <div id="petbox">
+      <div id="pin" class="pin"></div>
+      <div id="bubble" class="bubble"></div>
+      <div id="timer" class="timer"></div>
+      <canvas id="pet" style="position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated"></canvas>
+    </div>
+  </div>
+
+  <script src="../assets/atlas.js"></script>
+  <script src="../renderer/sprite.js"></script>
+  <script src="../renderer/audio.js"></script>
+  <script src="../renderer/pet.js"></script>
+  <script>
+  /* 웹 데모용 브리지 — Electron 창 대신 페이지 안의 div를 움직인다. */
+  (function (g) {
+    var box = document.getElementById('petbox');
+    var pos = { x: window.innerWidth - 340, y: window.innerHeight - 310 };
+    var cur = { x: -99999, y: -99999 };
+    var h = { key: [], wheel: [], agent: [], command: [], config: [] };
+    function place() { box.style.left = pos.x + 'px'; box.style.top = pos.y + 'px'; }
+    place();
+
+    window.addEventListener('mousemove', function (e) { cur.x = e.clientX; cur.y = e.clientY; });
+    window.addEventListener('keydown', function () { h.key.forEach(function (f) { f(); }); });
+    window.addEventListener('wheel', function (e) {
+      h.wheel.forEach(function (f) { f(e.deltaY || 120); });
+    }, { passive: true });
+
+    var cfg = {};
+    try { cfg = JSON.parse(localStorage.getItem('sudari') || '{}'); } catch (e) { cfg = {}; }
+
+    g.Sudari.bridge = {
+      isElectron: false,
+      onKey: function (c) { h.key.push(c); },
+      onWheel: function (c) { h.wheel.push(c); },
+      onAgent: function (c) { h.agent.push(c); },
+      onCommand: function (c) { h.command.push(c); },
+      onConfig: function (c) { h.config.push(c); },
+      getConfig: function () { return cfg; },
+      saveConfig: function (c) { cfg = c; localStorage.setItem('sudari', JSON.stringify(c)); },
+      cursorGlobal: function () { return cur; },
+      cursorLocal: function () { return { x: cur.x - pos.x, y: cur.y - pos.y }; },
+      petPos: function () { return pos; },
+      movePet: function (x, y) { pos.x = x; pos.y = y; place(); },
+      workArea: function () { return { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }; },
+      setInteractive: function () { /* 데모에서는 항상 상호작용 가능 */ },
+      contextMenu: function () { h.command.forEach(function (f) { f('wave'); }); },
+      _emit: function (kind, a, b) { h[kind].forEach(function (f) { f(a, b); }); }
+    };
+    g.SUDARI_ASSET_DIR = '../assets';
+  })(window);
+  </script>
+  <script src="../renderer/boot.js"></script>
+  <script>
+  /* 데모 컨트롤 배선 */
+  window.addEventListener('load', function () {
+    var B = window.Sudari.bridge;
+    document.querySelectorAll('[data-cmd]').forEach(function (b) {
+      b.addEventListener('click', function () { B._emit('command', b.dataset.cmd); });
+    });
+    document.getElementById('ai-think').addEventListener('click', function () {
+      B._emit('agent', { state: 'thinking' });
+    });
+    document.getElementById('ai-done').addEventListener('click', function () {
+      B._emit('agent', { state: 'done', text: '데모 작업 완료!' });
+    });
+    function patch(p) {
+      var pet = window.sudariPet;
+      if (!pet) return;
+      var next = window.Sudari.Pet.deepMerge(pet.cfg, p);
+      B.saveConfig(next);
+      pet.applyConfig(next);
+    }
+    document.getElementById('color').addEventListener('input', function () {
+      patch({ baseColor: this.value });
+    });
+    document.querySelectorAll('[data-color]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.getElementById('color').value = b.dataset.color;
+        patch({ baseColor: b.dataset.color });
+      });
+    });
+    document.getElementById('pattern').addEventListener('change', function () {
+      var pet = window.sudariPet;
+      var next = window.Sudari.Pet.deepMerge(pet.cfg, { pattern: this.value });
+      B.saveConfig(next);
+      pet.applyConfig(next);   // 무늬가 바뀌면 applyConfig가 시트를 다시 읽는다
+    });
+    document.getElementById('scale').addEventListener('change', function () {
+      patch({ scale: parseInt(this.value, 10) });
+    });
+    document.getElementById('name').addEventListener('input', function () {
+      patch({ name: this.value });
+    });
+  });
+  </script>
+</body>
+</html>
