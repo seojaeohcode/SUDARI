@@ -2,10 +2,10 @@
   <img src="docs/hero.png" width="180" alt="수다리">
 </p>
 
-<h1 align="center">수다리</h1>
+<h1 align="center">SUDARI</h1>
 
 <p align="center">
-  <b>내 컴퓨터에 사는 픽셀 수달</b><br>
+  <b>수다리 — 내 컴퓨터에 사는 픽셀 수달</b><br>
   마우스를 쫓아 눈을 굴리고, 타이핑하면 꾹꾹이를 하고, 스크롤하면 조개를 까고,<br>
   일이 끝나면 폴짝 뛰고, 가끔은 사랑한다고 말해주는 작은 데스크톱 친구예요.
 </p>
