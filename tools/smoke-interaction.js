@@ -6,6 +6,7 @@ app.setPath('userData',profile);app.setLoginItemSettings=()=>{};
 fs.writeFileSync(path.join(profile,'config.json'),JSON.stringify({language:'en',languageChosen:true,
   muted:false,volume:0.1,scale:2,ambient:{on:false},affection:{on:false,everyMin:40},launchAtLogin:false}));
 let cursor={x:0,y:0};
+let stage='startup';
 app.whenReady().then(()=>{screen.getCursorScreenPoint=()=>cursor;});
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 async function until(f){for(let i=0;i<100;i++){if(await f())return;await wait(30);}throw Error('Input check timed out');}
@@ -34,6 +35,7 @@ app.whenReady().then(async()=>{
     return head;
   }
   async function drag(label,during){
+    stage=label;
     const head=await grab(),before=win.getBounds();
     if(during)await during();
     cursor={x:cursor.x-35,y:cursor.y-15};
@@ -57,6 +59,7 @@ app.whenReady().then(async()=>{
       await js(`sudariPet.setAction('${pose}',60)`);await wait(50);
       await drag(scale+'x '+pose);
     }
+    console.log('PASS: all poses at requested size '+scale);
   }
   await js('sudariAPI.saveConfig({...sudariPet.cfg,scale:2})');await wait(180);
   for(const action of ['wave','love','snack','crack','fireworks','stretch','water','float','angry','angry','angry']){
@@ -70,6 +73,7 @@ app.whenReady().then(async()=>{
   }
   // Open the actual right-click menu while dragging, then choose a real menu item.
   for(const key of ['wave','love','timer','settings']){
+    stage='menu '+key;
     const head=await grab();
     win.webContents.sendInputEvent({type:'mouseDown',button:'right',clickCount:1,...head});
     win.webContents.sendInputEvent({type:'mouseUp',button:'right',clickCount:1,...head});
@@ -77,7 +81,9 @@ app.whenReady().then(async()=>{
     await until(()=>js('!sudariPet.drag'));
     win.webContents.sendInputEvent({type:'mouseUp',button:'left',clickCount:1,...head});
     await until(()=>!menu.webContents.isLoading());
-    await menu.webContents.executeJavaScript(`document.querySelector('[data-i18n="${key}"]').closest('button').click()`);
+    const menuPoint=await menu.webContents.executeJavaScript(`(()=>{const r=document.querySelector('[data-i18n="${key}"]').closest('button').getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)};})()`);
+    menu.webContents.sendInputEvent({type:'mouseDown',button:'left',clickCount:1,...menuPoint});
+    menu.webContents.sendInputEvent({type:'mouseUp',button:'left',clickCount:1,...menuPoint});
     await until(()=>menu.isDestroyed());await wait(120);
     if(key==='settings'){
       let settings;await until(()=>{settings=BrowserWindow.getAllWindows().find(w=>w!==win&&w.webContents.getURL().endsWith('settings.html'));return !!settings;});
@@ -85,6 +91,7 @@ app.whenReady().then(async()=>{
     }
     if(key==='timer')await js('sudariPet.togglePanel(false)');
     await drag('after menu '+key);
+    console.log('PASS: menu '+key+' and re-drag');
   }
   await js('sudariPet.action=null;sudariPet.idleT=100000');await wait(80);
   await grab();
@@ -100,4 +107,4 @@ app.whenReady().then(async()=>{
   assert.deepEqual(await js('inputErrors'),[]);
   console.log('PASS: 17 poses at sizes 2–5, commands, typing, scrolling, right-click menu, settings, idle and capture recovery');app.quit();
 }).catch(e=>{console.error(e);app.exit(1);});
-setTimeout(()=>{console.error('Input test timeout');app.exit(1);},120000).unref();
+setTimeout(()=>{console.error('Input test timeout at '+stage);app.exit(1);},120000).unref();
