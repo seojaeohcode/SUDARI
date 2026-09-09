@@ -94,6 +94,6 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           name: "SUDARI ${{ github.ref_name }} · A little otter, in your language 🦦"
-          body_path: docs/releases/2.0.0.md
+          body_path: docs/releases/2.0.1.md
           fail_on_unmatched_files: true
           files: release-assets/*

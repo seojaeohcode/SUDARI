@@ -17,7 +17,7 @@ const prebuild = path.join(resources, 'app.asar.unpacked/node_modules/uiohook-na
 assert.ok(fs.readdirSync(prebuild).some((name) => name.endsWith('.node')), `Missing ${native} input hook`);
 if (platform === 'win') assert.ok(fs.existsSync(path.join(resources, 'app.asar.unpacked/tools/input_hook.ps1')));
 for (const file of ['README.md', 'README.en.md', 'CONTRIBUTING.md', 'LICENSE',
-  'docs/banner.svg', 'docs/guide.ko.md', 'docs/releases/2.0.0.md', 'docs/reel.gif']) {
+  'docs/banner.svg', 'docs/guide.ko.md', 'docs/releases/2.0.1.md', 'docs/reel.gif']) {
   assert.ok(fs.existsSync(path.join(resources, file)), `Missing bundled documentation: ${file}`);
 }
 console.log(`PASS: packaged ${pkg.version}, ${platform}/${arch}, renderer, sprites, native input hook, README`);

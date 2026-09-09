@@ -3,13 +3,14 @@ import json
 langs=['en','ko','ja','zh-CN','zh-TW','es','fr','de','pt-BR','it','ru','ar']
 names=['English','한국어','日本語','简体中文','繁體中文','Español','Français','Deutsch','Português (Brasil)','Italiano','Русский','العربية']
 data='''
+pinHint|A note that stays beside your otter. Leave blank to hide.|수달 곁에 계속 띄워 둘 메모예요. 비우면 사라져요.|カワウソのそばに表示するメモです。空欄にすると非表示になります。|一直显示在水獭身旁的便签。留空即可隐藏。|一直顯示在水獺身旁的便箋。留空即可隱藏。|Una nota junto a tu nutria. Déjala vacía para ocultarla.|Une note près de votre loutre. Laissez vide pour la masquer.|Eine Notiz neben deinem Otter. Zum Ausblenden leer lassen.|Uma nota ao lado da sua lontra. Deixe em branco para ocultar.|Una nota accanto alla tua lontra. Lascia vuoto per nasconderla.|Заметка рядом с выдрой. Оставьте поле пустым, чтобы скрыть её.|ملاحظة تبقى بجانب قضاعتك. اترك الحقل فارغًا لإخفائها.
 settings|Settings|설정|設定|设置|設定|Ajustes|Réglages|Einstellungen|Configurações|Impostazioni|Настройки|الإعدادات
 language|Language|언어|言語|语言|語言|Idioma|Langue|Sprache|Idioma|Lingua|Язык|اللغة
-welcome|A little otter. A little better day.|작은 수달과, 조금 더 좋은 하루.|小さなラッコと、ちょっといい一日。|小小水獭，让每一天更美好。|小小水獺，讓每一天更美好。|Una pequeña nutria para alegrar tu día.|Une petite loutre pour une belle journée.|Ein kleiner Otter für einen schöneren Tag.|Uma pequena lontra para alegrar seu dia.|Una piccola lontra per una giornata migliore.|Маленькая выдра для хорошего дня.|قضاعة صغيرة ليوم أجمل.
+welcome|A little otter. A little better day.|작은 수달과, 조금 더 좋은 하루.|小さなカワウソと、ちょっといい一日。|小小水獭，让每一天更美好。|小小水獺，讓每一天更美好。|Una pequeña nutria para alegrar tu día.|Une petite loutre pour une belle journée.|Ein kleiner Otter für einen schöneren Tag.|Uma pequena lontra para alegrar seu dia.|Una piccola lontra per una giornata migliore.|Маленькая выдра для хорошего дня.|قضاعة صغيرة ليوم أجمل.
 choose|Choose your language|사용할 언어를 골라 주세요|言語を選んでください|请选择语言|請選擇語言|Elige tu idioma|Choisissez votre langue|Wähle deine Sprache|Escolha seu idioma|Scegli la tua lingua|Выберите язык|اختر لغتك
 languageHint|You can change this anytime in Settings.|설정에서 언제든 바꿀 수 있어요.|設定でいつでも変更できます。|可随时在设置中更改。|可隨時在設定中更改。|Puedes cambiarlo en Ajustes.|Modifiable à tout moment dans les réglages.|Jederzeit in den Einstellungen änderbar.|Você pode mudar nas configurações.|Puoi cambiarla nelle impostazioni.|Можно изменить в настройках.|يمكنك تغييرها من الإعدادات في أي وقت.
 meet|Meet Sudari|수다리 만나기|スダリに会う|认识 Sudari|認識 Sudari|Conocer a Sudari|Rencontrer Sudari|Sudari kennenlernen|Conhecer Sudari|Incontra Sudari|Знакомство с Sudari|تعرّف على Sudari
-appearance|Your otter|내 수달|あなたのラッコ|我的水獭|我的水獺|Tu nutria|Votre loutre|Dein Otter|Sua lontra|La tua lontra|Ваша выдра|قضاعتك
+appearance|Your otter|내 수달|あなたのカワウソ|我的水獭|我的水獺|Tu nutria|Votre loutre|Dein Otter|Sua lontra|La tua lontra|Ваша выдра|قضاعتك
 name|Your name|불러줄 이름|呼んでほしい名前|你的名字|你的名字|Tu nombre|Votre prénom|Dein Name|Seu nome|Il tuo nome|Ваше имя|اسمك
 nameHint|What should I call you?|어떻게 불러줄까요?|なんて呼べばいい？|我该怎么称呼你？|我該怎麼稱呼你？|¿Cómo te llamo?|Comment vous appeler ?|Wie soll ich dich nennen?|Como devo te chamar?|Come ti chiamo?|Как вас называть?|بماذا أناديك؟
 color|Fur color|털 색|毛色|毛色|毛色|Color del pelaje|Couleur du pelage|Fellfarbe|Cor do pelo|Colore del pelo|Цвет шерсти|لون الفراء

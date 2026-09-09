@@ -63,6 +63,7 @@
   ],
   "messages": {
     "en": {
+      "pinHint": "A note that stays beside your otter. Leave blank to hide.",
       "settings": "Settings",
       "language": "Language",
       "welcome": "A little otter. A little better day.",
@@ -160,6 +161,7 @@
       "petLine": "That's the spot…"
     },
     "ko": {
+      "pinHint": "수달 곁에 계속 띄워 둘 메모예요. 비우면 사라져요.",
       "settings": "설정",
       "language": "언어",
       "welcome": "작은 수달과, 조금 더 좋은 하루.",
@@ -257,13 +259,14 @@
       "petLine": "거기 좋아…"
     },
     "ja": {
+      "pinHint": "カワウソのそばに表示するメモです。空欄にすると非表示になります。",
       "settings": "設定",
       "language": "言語",
-      "welcome": "小さなラッコと、ちょっといい一日。",
+      "welcome": "小さなカワウソと、ちょっといい一日。",
       "choose": "言語を選んでください",
       "languageHint": "設定でいつでも変更できます。",
       "meet": "スダリに会う",
-      "appearance": "あなたのラッコ",
+      "appearance": "あなたのカワウソ",
       "name": "呼んでほしい名前",
       "nameHint": "なんて呼べばいい？",
       "color": "毛色",
@@ -354,6 +357,7 @@
       "petLine": "そこ、気持ちいい…"
     },
     "zh-CN": {
+      "pinHint": "一直显示在水獭身旁的便签。留空即可隐藏。",
       "settings": "设置",
       "language": "语言",
       "welcome": "小小水獭，让每一天更美好。",
@@ -451,6 +455,7 @@
       "petLine": "就是那里，好舒服…"
     },
     "zh-TW": {
+      "pinHint": "一直顯示在水獺身旁的便箋。留空即可隱藏。",
       "settings": "設定",
       "language": "語言",
       "welcome": "小小水獺，讓每一天更美好。",
@@ -548,6 +553,7 @@
       "petLine": "就是那裡，好舒服…"
     },
     "es": {
+      "pinHint": "Una nota junto a tu nutria. Déjala vacía para ocultarla.",
       "settings": "Ajustes",
       "language": "Idioma",
       "welcome": "Una pequeña nutria para alegrar tu día.",
@@ -645,6 +651,7 @@
       "petLine": "Ahí, justo ahí…"
     },
     "fr": {
+      "pinHint": "Une note près de votre loutre. Laissez vide pour la masquer.",
       "settings": "Réglages",
       "language": "Langue",
       "welcome": "Une petite loutre pour une belle journée.",
@@ -742,6 +749,7 @@
       "petLine": "Oui, juste là…"
     },
     "de": {
+      "pinHint": "Eine Notiz neben deinem Otter. Zum Ausblenden leer lassen.",
       "settings": "Einstellungen",
       "language": "Sprache",
       "welcome": "Ein kleiner Otter für einen schöneren Tag.",
@@ -839,6 +847,7 @@
       "petLine": "Genau da…"
     },
     "pt-BR": {
+      "pinHint": "Uma nota ao lado da sua lontra. Deixe em branco para ocultar.",
       "settings": "Configurações",
       "language": "Idioma",
       "welcome": "Uma pequena lontra para alegrar seu dia.",
@@ -936,6 +945,7 @@
       "petLine": "É aí mesmo…"
     },
     "it": {
+      "pinHint": "Una nota accanto alla tua lontra. Lascia vuoto per nasconderla.",
       "settings": "Impostazioni",
       "language": "Lingua",
       "welcome": "Una piccola lontra per una giornata migliore.",
@@ -1033,6 +1043,7 @@
       "petLine": "Sì, proprio lì…"
     },
     "ru": {
+      "pinHint": "Заметка рядом с выдрой. Оставьте поле пустым, чтобы скрыть её.",
       "settings": "Настройки",
       "language": "Язык",
       "welcome": "Маленькая выдра для хорошего дня.",
@@ -1130,6 +1141,7 @@
       "petLine": "Вот тут хорошо…"
     },
     "ar": {
+      "pinHint": "ملاحظة تبقى بجانب قضاعتك. اترك الحقل فارغًا لإخفائها.",
       "settings": "الإعدادات",
       "language": "اللغة",
       "welcome": "قضاعة صغيرة ليوم أجمل.",

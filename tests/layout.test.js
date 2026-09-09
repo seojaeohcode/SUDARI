@@ -37,3 +37,28 @@ test('invalid saved scales cannot create NaN or unsupported window sizes', () =>
     assert.ok(layout.size(input).height <= 912);
   }
 });
+
+test('notes stay adjacent and never overlap the timer or editor', () => {
+  for (const s of [1,2,3,4,5]) {
+    const height=s===1?296:layout.size(s).height;
+    for (const base of [70*s+10,84*s+10]) {
+      for (const editor of [false,true]) {
+        for (const talking of [false,true]) {
+          const items=[{id:editor?'panel':'timer',height:editor?260:52*s,minHeight:editor?96:52*s}];
+          if(talking)items.push({id:'bubble',height:112,minHeight:42});
+          items.push({id:'pin',height:72,minHeight:34});
+          const result=layout.stack(height,base,items);
+          assert.equal(result.overflow,0,JSON.stringify({s,base,editor,talking,result}));
+          let previous=base;
+          for(const [i,item] of items.entries()){
+            const r=result.positions[item.id];
+            assert.equal(r.bottom,previous+(i?8:0));
+            assert.ok(r.height>=item.minHeight);
+            assert.ok(r.bottom+r.height<=height-12);
+            previous=r.bottom+r.height;
+          }
+        }
+      }
+    }
+  }
+});

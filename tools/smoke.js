@@ -76,6 +76,64 @@ app.whenReady().then(async () => {
       assert.equal(row.canvasWidth, Math.round(row.viewport * row.dpr));
       rows.push(row);
     }
+    // Real DOM regression: every pose and locale, including simultaneous long notes,
+    // speech and the editor. Capture both the ordinary and the worst-case layout.
+    const overlays=await js(`(()=>{
+      const p=sudariPet,failures=[];
+      function check(label){
+        p.draw(p._petBox());
+        const active=[p.ui.timerPanel.classList.contains('show')?p.ui.timerPanel:p.pomo?p.ui.timer:null,
+          p.ui.bubble.classList.contains('show')?p.ui.bubble:null,p.cfg.pin?p.ui.pin:null].filter(Boolean);
+        let previous=null;
+        for(const el of active){
+          const r=el.getBoundingClientRect();
+          if(r.top<11||r.left<0||r.right>innerWidth+1||r.height<1)failures.push(label+': outside '+el.id);
+          if(previous&&Math.abs(previous.top-r.bottom-8)>1)failures.push(label+': gap/overlap '+el.id);
+          if(getComputedStyle(el).visibility==='hidden')failures.push(label+': hidden '+el.id);
+          previous=r;
+        }
+        if(!p.ui.timerPanel.classList.contains('show')){
+          const shell=p.ui.timer.getBoundingClientRect();
+          let bottom=0;
+          for(const el of p.ui.timer.querySelector('.shell').children){
+            const r=el.getBoundingClientRect();
+            if(r.top<bottom||r.bottom>shell.bottom||r.left<shell.left||r.right>shell.right||el.scrollWidth>el.clientWidth+1)
+              failures.push(label+': timer label overlap/clipping '+el.className);
+            bottom=r.bottom;
+          }
+          if(p.ui.timer.querySelector('.phase').getBoundingClientRect().width>shell.width*.81)
+            failures.push(label+': phase label too wide');
+        }
+      }
+      p.setAction('idle',60);p.yOff=0;p.anim='idle';p.frame=0;
+      for(const l of Sudari.i18n.languages){
+        p.applyConfig({...p.cfg,language:l.id,pin:('Memo · '+l.name+' ').repeat(10).slice(0,120)});
+        for(const editor of [false,true]){
+          p.togglePanel(editor);
+          p.say(Sudari.i18n.t('stretchLine').repeat(6),60000);
+          check(l.id+' '+editor);
+          if(!editor)for(const phase of ['focus','break']){
+            p.pomo.phase=phase;p._renderTimer();check(l.id+' '+phase);
+          }
+        }
+      }
+      p.applyConfig({...p.cfg,language:'ko',pin:'오늘도 같이 집중해요'});
+      p.togglePanel(false);p.say('잠깐 쉬어도 괜찮아. 여기서 기다릴게!',60000);
+      for(const name of Object.keys(p.sprite.atlas.anims)){
+        p.anim=name;p.frame=0;p.action={tag:name,until:performance.now()+60000,t0:performance.now()};p.yOff=name==='jump'?14*p.scale:0;
+        check(name);
+      }
+      p.setAction('idle',60);p.yOff=0;p.anim='idle';p.draw(p._petBox());
+      return failures;
+    })()`);
+    assert.deepEqual(overlays,[],'Overlay bounds and 8px gaps at scale '+scale);
+    await wait(180);
+    fs.writeFileSync(path.join(output,'messages-'+scale+'.png'),(await win.webContents.capturePage()).toPNG());
+    await js(`sudariPet.togglePanel(true);sudariPet.say('설정 중에도 메모와 대사가 겹치지 않아요.',60000);sudariPet.draw(sudariPet._petBox())`);
+    await wait(180);
+    assert.equal(await js("sudariPet.ui.timerPanel.classList.contains('show')"),true);
+    fs.writeFileSync(path.join(output,'messages-panel-'+scale+'.png'),(await win.webContents.capturePage()).toPNG());
+    await js(`sudariPet.togglePanel(false);sudariPet.ui.bubble.classList.remove('show');sudariPet.bubbleUntil=0;sudariPet.draw(sudariPet._petBox())`);
     // Open the shell by a real renderer mouse event, then use its controls.
     // The geometry checks above force the peak of a jump. Settle the pet before
     // measuring the click point, or the next animation frame moves it by 14*scale.

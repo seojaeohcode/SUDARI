@@ -19,11 +19,11 @@
 
 ## 🦦 수다리 입양하기
 
-| 내 컴퓨터 | 바로 다운로드 · v2.0.0 |
+| 내 컴퓨터 | 바로 다운로드 · v2.0.1 |
 | :--- | :--- |
-| **Windows 10 / 11** · x64 | [설치형 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-Setup.exe) · [무설치 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-Portable.exe) |
-| **Mac · Apple Silicon** (M 시리즈) | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-mac-arm64.dmg) |
-| **Mac · Intel** | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-mac-x64.dmg) |
+| **Windows 10 / 11** · x64 | [설치형 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Setup.exe) · [무설치 EXE](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Portable.exe) |
+| **Mac · Apple Silicon** (M 시리즈) | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-arm64.dmg) |
+| **Mac · Intel** | [DMG 다운로드](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-x64.dmg) |
 
 Mac은 **macOS 12 이상**을 지원해요. ZIP과 파일 확인용 SHA-256은 [릴리즈 페이지](https://github.com/seojaeohcode/SUDARI/releases/latest)에 있어요. 실행할 때 Node.js나 Python은 필요 없어요.
 
@@ -39,6 +39,10 @@ Mac은 **macOS 12 이상**을 지원해요. ZIP과 파일 확인용 SHA-256은 [
 </details>
 
 바탕화면 오른쪽 아래에서 만나요. **수달 우클릭** 또는 **트레이 / 메뉴바 아이콘**으로 설정과 종료 메뉴를 열 수 있어요.
+
+> 🫧 **2.0.1:** 메모·대사·조개가 가까이 모이고 겹치지 않아요. 집중·휴식 표시는 글자 길이에 맞춰 짧아졌어요. [수정 내용](docs/releases/2.0.1.md)
+
+<p align="center"><img src="docs/messages.png" width="300" alt="메모와 대사, 작은 휴식 표시가 서로 겹치지 않는 실제 앱 화면"></p>
 
 > 🐚 **2.0.0:** 새로 그린 수달과 조개, 선명한 집중·휴식 표시, 귀여운 우클릭 메뉴와 탭 설정창을 만나보세요. 조개가 수달 머리 가까이 붙고 함께 커져요. 작은 화면에서는 잘리지 않게 크기를 맞춰요. [변경 내용](docs/releases/2.0.0.md)
 

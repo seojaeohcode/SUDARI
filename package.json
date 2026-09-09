@@ -1,6 +1,6 @@
 {
   "name": "sudari",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "수다리 - 내 컴퓨터에 사는 픽셀 수달 (Sudari, a pixel otter that lives on your desktop)",
   "main": "main.js",
   "scripts": {

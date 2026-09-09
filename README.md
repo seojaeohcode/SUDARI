@@ -16,11 +16,11 @@ It follows your cursor, kneads while you type, and keeps you company through one
 
 ## 🐚 Bring an otter home
 
-| Your computer | Download v2.0.0 |
+| Your computer | Download v2.0.1 |
 | :--- | :--- |
-| Windows 10 / 11 · x64 | [Installer](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-Setup.exe) · [Portable](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-Portable.exe) |
-| Mac · Apple Silicon (M series) | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-mac-arm64.dmg) |
-| Mac · Intel | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.0/Sudari-2.0.0-mac-x64.dmg) |
+| Windows 10 / 11 · x64 | [Installer](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Setup.exe) · [Portable](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-Portable.exe) |
+| Mac · Apple Silicon (M series) | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-arm64.dmg) |
+| Mac · Intel | [DMG](https://github.com/seojaeohcode/SUDARI/releases/download/v2.0.1/Sudari-2.0.1-mac-x64.dmg) |
 
 macOS 12 or later. ZIP alternatives and SHA-256 checksums are on the [release page](https://github.com/seojaeohcode/SUDARI/releases/latest). No Node.js or Python needed to use the app. Choose from 12 languages during setup or first launch; English is the default. Change it anytime in Settings.
 
@@ -46,6 +46,10 @@ Right-click the otter or use its tray / menu-bar icon for settings, size, the ti
 **Make it yours:** eight fur presets, a custom color picker, four patterns, sizes 2×–5×, your name in dialogue, a pinned note and optional reminders. Drag the otter to move it. Peek mode tucks it against the screen edge.
 
 <p align="center"><img src="docs/palette.png" width="900" alt="Eight fur colors, from brown and gold to pink and mint"></p>
+
+**Fixed in 2.0.1:** notes, dialogue and the shell stay together without overlapping. Focus/break badges now fit their text. [Patch notes](docs/releases/2.0.1.md).
+
+<p align="center"><img src="docs/messages.png" width="300" alt="Actual app: a note and dialogue neatly stacked above a compact break badge"></p>
 
 **New in 2.0.0:** a redrawn river otter, crisp shell art with readable focus/break labels, a cute illustrated right-click menu and tabbed settings. The shell stays close to your otter, scales together with it, and makes room for movement. Small displays automatically fit the pet. Dialogue, menus and settings share the same language. [Release notes](docs/releases/2.0.0.md).
 

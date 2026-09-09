@@ -6,7 +6,7 @@
     return Number.isFinite(n) ? Math.max(2, Math.min(5, Math.round(n))) : 2;
   }
   function desired(s) {
-    return { width: Math.max(360, 120 * s), height: 154 * s + 142 };
+    return { width: Math.max(360, 120 * s), height: Math.max(s > 1 ? 500 : 0, 154 * s + 142) };
   }
   function effectiveScale(v, area) {
     var s = scale(v);
@@ -42,8 +42,27 @@
       height: d.height,
     };
   }
+  // Bottom-up overlay stack. Shrink scrollable text first, then the editor;
+  // the shell keeps its full size and every item keeps a separate hit rectangle.
+  function stack(height, bottom, items) {
+    var gap = 8, top = 12;
+    var sizes = items.map(function(item) { return Math.ceil(item.height); });
+    var available = Math.max(0, height - top - bottom - gap * Math.max(0, items.length - 1));
+    var excess = Math.max(0, sizes.reduce(function(a,b) { return a+b; }, 0) - available);
+    for (var i = items.length - 1; i >= 0 && excess > 0; i--) {
+      var shrink = Math.min(excess, Math.max(0, sizes[i] - items[i].minHeight));
+      sizes[i] -= shrink; excess -= shrink;
+    }
+    var positions = {}, cursor = bottom;
+    items.forEach(function(item, index) {
+      positions[item.id] = {bottom: cursor, height: sizes[index]};
+      cursor += sizes[index] + gap;
+    });
+    return {positions: positions, overflow: excess};
+  }
   var api = {
     scale: scale,
+    stack: stack,
     effectiveScale: effectiveScale,
     size: size,
     bounds: bounds,

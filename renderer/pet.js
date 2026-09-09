@@ -432,7 +432,6 @@
     if (show) this._syncPanel();
     p.classList.toggle('show', !!show);
     this.canvas.parentElement.classList.toggle('panel-open', !!show);
-    if (show && this.ui.bubble) { this.ui.bubble.classList.remove('show'); this.bubbleUntil = 0; }
   };
 
   // ------------------------------------------------------------------ 알림/리마인더
@@ -730,11 +729,13 @@
     if(this.flip !== !!(this.action && this.action.tag==='sulk'))x=this.sprite.fw-1-x;
     if(this.sprite.contains(this.anim,this.frame,x,y))return true;
     // 조개 타이머와 설정 패널도 클릭 대상
-    var els = [this.ui.timer, this.ui.timerPanel];
+    var els = [this.ui.timer, this.ui.timerPanel, this.ui.pin, this.ui.bubble];
     var origin = this.canvas.getBoundingClientRect();
     for (var i = 0; i < els.length; i++) {
       var el = els[i];
-      if (!el || !el.classList.contains('show') || getComputedStyle(el).visibility === 'hidden') continue;
+      if (!el) continue;
+      var style=getComputedStyle(el);
+      if(style.display==='none'||style.visibility==='hidden'||style.opacity==='0'||style.pointerEvents==='none')continue;
       var r = el.getBoundingClientRect();
       var margin = this.scale;
       if (c.x >= r.left - origin.left - margin && c.x <= r.right - origin.left + margin &&
@@ -1001,18 +1002,41 @@
     var poseTop = Math.min.apply(null, pose.frames.map(function(f){return f.head[1]-f.headR[1]-3;}));
     var jumping = this.action && this.action.tag === 'jump';
     var base = 10 + (this.sprite.fh - poseTop + (jumping ? 14 : 0)) * this.scale;
-    var stack = base + 4;
-    if (this.ui.timer) {
-      this.ui.timer.style.bottom = stack + 'px';
-      if (this.pomo) stack += 104 * this.scale / 2 + 8;
+    this._layoutOverlays(Math.ceil(base + 4));
+  };
+
+  Pet.prototype._layoutOverlays = function (base) {
+    var ui=this.ui, panelOpen=ui.timerPanel && ui.timerPanel.classList.contains('show');
+    var speaking=ui.bubble && ui.bubble.classList.contains('show');
+    var key=[this.vw,this.vh,this.scale,base,panelOpen,!!this.pomo,speaking,
+      speaking?ui.bubble.textContent:'',this.cfg.pin,this.cfg.language,
+      panelOpen?ui.timerPanel.textContent:''].join('|');
+    if(key===this._overlayKey)return;
+    this._overlayKey=key;
+    var items=[], elements={};
+    function measure(id,el,limit,minimum) {
+      el.style.maxHeight=limit+'px'; el.style.height='auto';
+      items.push({id:id,height:Math.ceil(el.getBoundingClientRect().height),minHeight:minimum});
+      elements[id]=el;
     }
-    var topInset = this.ui.pin && this.cfg.pin ? this.ui.pin.offsetHeight + 20 : 12;
-    if (this.ui.timerPanel) this.ui.timerPanel.style.bottom = Math.min(base,
-      this.vh - this.ui.timerPanel.offsetHeight - topInset) + 'px';
-    if (this.ui.bubble) {
-      this.ui.bubble.style.bottom = stack + 'px';
-      this.ui.bubble.style.maxHeight = Math.max(0,this.vh-stack-topInset) + 'px';
+    if(panelOpen)measure('panel',ui.timerPanel,280,96);
+    else if(this.pomo && ui.timer){
+      var h=104*this.scale/2;
+      items.push({id:'timer',height:h,minHeight:h});elements.timer=ui.timer;
     }
+    if(speaking)measure('bubble',ui.bubble,112,42);
+    if(this.cfg.pin && ui.pin)measure('pin',ui.pin,72,34);
+    var result=global.Sudari.layout.stack(this.vh,base,items);
+    Object.keys(result.positions).forEach(function(id){
+      var el=elements[id],r=result.positions[id];
+      el.style.top='auto';el.style.bottom=r.bottom+'px';
+      if(id!=='timer') {
+        el.style.maxHeight=r.height+'px';
+        el.style.height=r.height+'px';
+        // Only overflowing text captures clicks, so ordinary bubbles stay transparent to input.
+        if(id!=='panel')el.style.pointerEvents=el.scrollHeight>el.clientHeight?'auto':'none';
+      }
+    });
   };
 
   Pet.prototype.start = function () {

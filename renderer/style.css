@@ -76,7 +76,7 @@ button:disabled {
   opacity: 1;
 }
 .pin {
-  top: 8px;
+  top: auto;
   display: none;
   background: #f6e7ac;
   font-size: 12px;
@@ -132,8 +132,7 @@ button:disabled {
 .timer:hover {
   filter: brightness(1.06);
 }
-.panel-open .timer,
-.panel-open .bubble {
+.panel-open .timer {
   visibility: hidden;
   pointer-events: none;
 }
@@ -191,6 +190,7 @@ button:disabled {
   flex: 1;
   white-space: normal;
   min-width: 60px;
+  padding: 4px;
 }
 .tpanel .primary {
   background: #d4e9df;
@@ -769,4 +769,31 @@ select {
   padding: calc(1px * var(--timer-scale, 1)) 0;
   background: #fffdf7;
   border-radius: calc(4px * var(--timer-scale, 1));
+}
+
+/* Notes share the pet overlay stack; long messages remain scrollable. */
+.bubble,.pin,.tpanel { overflow-y:auto; scrollbar-width:thin; overscroll-behavior:contain; }
+.bubble { visibility:hidden; transition:none; }
+.bubble.show { visibility:visible; }
+/* Compact labels follow their text instead of spanning the shell. */
+.timer .phase {
+  left:50%; right:auto; transform:translateX(-50%);
+  width:max-content; max-width:80%;
+  padding:calc(1px * var(--timer-scale, 1)) calc(5px * var(--timer-scale, 1));
+  white-space:normal;
+}
+.timer .round {
+  left:50%; right:auto; transform:translateX(-50%);
+  width:max-content; max-width:64%;
+  padding:calc(1px * var(--timer-scale, 1)) calc(5px * var(--timer-scale, 1));
+}
+.timer .shell {
+  inset:28% 0 5%;
+  display:flex;
+  justify-content:flex-start;
+}
+.timer b, .timer .phase, .timer .round {
+  position:static;
+  transform:none;
+  flex-shrink:0;
 }
