@@ -8,6 +8,8 @@ const layout = require('../renderer/layout');
 
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'sudari-smoke-'));
 app.setPath('userData', profile);
+// A test profile must not change the user's OS login items.
+app.setLoginItemSettings = () => {};
 fs.writeFileSync(path.join(profile, 'config.json'), JSON.stringify({
   scale: 2, muted: true, launchAtLogin: false,
   ambient: { on: false }, affection: { on: false, everyMin: 40 }
@@ -73,6 +75,10 @@ app.whenReady().then(async () => {
       rows.push(row);
     }
     // Open the shell by a real renderer mouse event, then use its controls.
+    // The geometry checks above force the peak of a jump. Settle the pet before
+    // measuring the click point, or the next animation frame moves it by 14*scale.
+    await js(`sudariPet.setAction('idle', 60); sudariPet.yOff = 0; sudariPet.draw(sudariPet._petBox())`);
+    await wait(80);
     const point = await js(`(() => { const r = sudariPet.ui.timer.getBoundingClientRect(); return {x: Math.round(r.x+r.width/2), y: Math.round(r.y+r.height/2)}; })()`);
     win.webContents.sendInputEvent({ type: 'mouseDown', button: 'left', clickCount: 1, ...point });
     win.webContents.sendInputEvent({ type: 'mouseUp', button: 'left', clickCount: 1, ...point });
