@@ -159,9 +159,6 @@
     window.addEventListener('pointercancel', release, true);
     window.addEventListener('blur', release);
     window.addEventListener('pagehide', release);
-    window.addEventListener('pointermove', function (e) {
-      if (s.drag && !(e.buttons & 1)) release(e);
-    });
 
     this.canvas.addEventListener('contextmenu', function (e) {
       e.preventDefault();

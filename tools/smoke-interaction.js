@@ -94,8 +94,8 @@ app.whenReady().then(async()=>{
   await js("window.dispatchEvent(new PointerEvent('pointerup',{pointerId:1,bubbles:true}))");
   assert.equal(await js('!!sudariPet.drag'),false,'Release outside the canvas ends dragging');
   await grab();
-  await js("sudariPet.canvas.dispatchEvent(new PointerEvent('pointermove',{pointerId:1,buttons:0,bubbles:true}))");
-  assert.equal(await js('!!sudariPet.drag'),false,'Moving without a pressed button recovers a missed release');
+  await js("window.dispatchEvent(new PointerEvent('pointercancel',{pointerId:1,bubbles:true}))");
+  assert.equal(await js('!!sudariPet.drag'),false,'Pointer cancellation recovers an interrupted drag');
   await drag('after missed release');
   assert.deepEqual(await js('inputErrors'),[]);
   console.log('PASS: 17 poses at sizes 2–5, commands, typing, scrolling, right-click menu, settings, idle and capture recovery');app.quit();
