@@ -19,6 +19,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # 업로드는 아래 action-gh-release 가 한다. electron-builder 의 태그 감지 자동 배포는 끈다.
       - run: npm run dist
       - uses: softprops/action-gh-release@v2
         with:

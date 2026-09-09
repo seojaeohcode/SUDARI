@@ -8,7 +8,7 @@
     "sprites": "python tools/gen_sprites.py",
     "icon": "python tools/make_icon.py",
     "pack": "electron-builder --win --dir",
-    "dist": "electron-builder --win"
+    "dist": "electron-builder --win --publish never"
   },
   "author": "seojaeohcode",
   "license": "Apache-2.0",
