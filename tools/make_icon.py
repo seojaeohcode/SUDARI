@@ -34,10 +34,15 @@ box = (cx - side // 2, cy - side // 2, cx - side // 2 + side, cy - side // 2 + s
 head = frame.crop(box)
 
 sizes = [256, 128, 64, 48, 32, 16]
-imgs = []
-for s in sizes:
-    im = head.resize((s, s), Image.NEAREST)
-    imgs.append(im)
-imgs[0].save(os.path.join(B, "icon.png"))
+imgs = [head.resize((s, s), Image.NEAREST) for s in sizes]
 imgs[0].save(os.path.join(B, "icon.ico"), format="ICO", sizes=[(s, s) for s in sizes])
-print("build/icon.ico, build/icon.png  (%dx%d 소스 → %s)" % (side, side, sizes))
+# macOS .icns 변환용으로 electron-builder 는 512px 이상의 PNG 를 요구한다
+head.resize((1024, 1024), Image.NEAREST).save(os.path.join(B, "icon.png"))
+
+# macOS 메뉴바 아이콘: 22pt. @2x 는 32px 원본을 44px 캔버스 가운데에 1:1로 (픽셀 또렷하게)
+tray = Image.open(os.path.join(A, "tray.png")).convert("RGBA")
+tray.resize((22, 22), Image.LANCZOS).save(os.path.join(A, "tray-mac.png"))
+canvas = Image.new("RGBA", (44, 44), (0, 0, 0, 0))
+canvas.paste(tray, (6, 6), tray)
+canvas.save(os.path.join(A, "tray-mac@2x.png"))
+print("build/icon.ico, build/icon.png(1024), assets/tray-mac.png(+@2x)  (%dx%d 소스)" % (side, side))

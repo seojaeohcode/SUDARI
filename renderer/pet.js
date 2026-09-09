@@ -274,6 +274,7 @@
         this.say('둥둥…', 2000);
         break;
       case 'love': this.love(); break;
+      case 'say': this.say(arg || '', 4200); break;
       case 'angry': this.tailPull(); break;
       case 'timer-panel': this.togglePanel(true); break;
       case 'fireworks':

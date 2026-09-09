@@ -13,6 +13,7 @@
 <p align="center">
   <a href="https://github.com/seojaeohcode/SUDARI/releases/latest"><img src="https://img.shields.io/github/v/release/seojaeohcode/SUDARI?style=flat-square&color=c48a52&label=%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C" alt="release"></a>
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-925f3f?style=flat-square" alt="windows">
+  <img src="https://img.shields.io/badge/macOS-12%2B-6b4a3c?style=flat-square" alt="macos">
   <img src="https://img.shields.io/badge/Electron-33-6b4a3c?style=flat-square" alt="electron">
   <img src="https://img.shields.io/badge/license-Apache--2.0-d9a3ad?style=flat-square" alt="license">
 </p>
@@ -41,14 +42,24 @@
 
 ## ⬇️ 설치 — 30초
 
-Node.js 같은 건 필요 없어요.
+Node.js 같은 건 필요 없어요. **[최신 릴리스](https://github.com/seojaeohcode/SUDARI/releases/latest)** 에서 받아요.
 
-1. **[최신 릴리스](https://github.com/seojaeohcode/SUDARI/releases/latest)** 에서 파일을 받아요
-   - `Sudari-x.y.z-Setup.exe` — 설치형 (바탕화면 아이콘 생김)
-   - `Sudari-x.y.z-Portable.exe` — 설치 없이 바로 실행
+**Windows**
+
+1. `Sudari-x.y.z-Setup.exe`(설치형, 바탕화면 아이콘 생김) 또는 `Sudari-x.y.z-Portable.exe`(설치 없이 실행)
 2. 실행해요. Windows가 **"PC를 보호했습니다"** 창을 띄우면 `추가 정보 → 실행`
    (코드 서명이 없는 개인 배포 앱이라 뜨는 안내예요)
-3. 오른쓴 아래에 수달이 나타나요. 🦦 트레이 아이콘이나 **수달을 우클릭**하면 메뉴가 열려요.
+
+**macOS**
+
+1. `Sudari-x.y.z-mac-arm64.dmg`(Apple Silicon) 또는 `Sudari-x.y.z-mac-x64.dmg`(Intel)를 열고 Sudari를 응용 프로그램 폴더로 끌어요
+2. 처음 열면 "확인되지 않은 개발자" 안내가 떠요. **시스템 설정 → 개인정보 보호 및 보안 → 아래로 내려 "그래도 열기"**
+   (Apple 공증을 받지 않은 개인 배포 앱이라 뜨는 안내예요)
+3. 키보드·스크롤 반응(꾹꾹이·과열·조개 까기)은 **손쉬운 사용(접근성) / 입력 모니터링** 권한이 필요해요.
+   메뉴바 🦦 → *키보드·스크롤 반응 켜기* 를 누르면 시스템 설정으로 안내하고, 허용 뒤 앱을 다시 켜면 돼요.
+   허용하지 않아도 나머지 기능은 모두 동작해요. 수다리는 어떤 키인지는 읽지 않고 "눌렸다"만 세요.
+
+오른쓴 아래에 수달이 나타나요. 🦦 트레이(메뉴바) 아이콘이나 **수달을 우클릭**하면 메뉴가 열려요.
 
 > 처음엔 이름이 비어 있어요. 설정에서 이름을 적으면 "사랑해 ○○!", "○○, 점심 먹으러 가자!" 하고 불러줘요.
 

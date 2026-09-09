@@ -1,5 +1,5 @@
-# 태그(v*)를 푸시하면 Windows 설치파일/포터블 exe를 빌드해 GitHub Release에 올린다.
-#   git tag v0.1.0 && git push --tags
+# 태그(v*)를 푸시하면 Windows exe 와 macOS dmg/zip 을 빌드해 GitHub Release 에 올린다.
+#   git tag v1.1.0 && git push origin v1.1.0
 name: release
 
 on:
@@ -19,10 +19,27 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # 업로드는 아래 action-gh-release 가 한다. electron-builder 의 태그 감지 자동 배포는 끈다.
+      # 업로드는 아래 action-gh-release 가 한다. electron-builder 의 태그 감지 자동 배포는 꺼져 있다.
       - run: npm run dist
       - uses: softprops/action-gh-release@v2
         with:
+          files: dist/*.exe
+          generate_release_notes: true
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # 서명/공증 없이 빌드한다 (Apple 개발자 계정 없음). Apple Silicon + Intel 각각.
+      - run: npm run dist:mac
+      - uses: softprops/action-gh-release@v2
+        with:
           files: |
-            dist/*.exe
+            dist/*.dmg
+            dist/*-mac-*.zip
           generate_release_notes: true

@@ -3,7 +3,7 @@
  * · 전역 커서 위치(폴링), 전역 키/휠 이벤트(PowerShell 후크), AI 상태(로컬 HTTP)를
  *   렌더러로 흘려보낸다.
  */
-const { app, BrowserWindow, ipcMain, screen, Tray, Menu, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, Tray, Menu, shell, systemPreferences } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
@@ -20,6 +20,8 @@ let petWin = null;
 let settingsWin = null;
 let tray = null;
 let hookProc = null;
+let uiohook = null;             // macOS/Linux 전역 입력 후크 (uiohook-napi)
+let hookState = 'off';          // off | powershell | uiohook | no-permission | failed
 let agentServer = null;
 let cursorTimer = null;
 let config = null;
@@ -168,11 +170,61 @@ function startCursorPolling() {
 
 // ------------------------------------------------------------------ 전역 입력 후크
 /**
- * PowerShell + Win32 저수준 후크로 "키가 눌렸다"와 "휠이 굴렀다"만 받는다.
- * 어떤 키였는지는 의도적으로 수집하지 않는다(키로거가 되지 않도록).
+ * "키가 눌렸다"와 "휠이 굴렀다"만 받는다. 어떤 키였는지는 어느 경로에서도 읽지 않는다.
+ *   Windows : PowerShell + Win32 저수준 후크 (tools/input_hook.ps1)
+ *   macOS/Linux : uiohook-napi (macOS 는 접근성·입력 모니터링 권한이 필요)
+ * SUDARI_HOOK=uiohook|powershell 로 강제할 수 있다 (테스트용).
  */
+function sendInput(kind, value) {
+  if (petWin && !petWin.isDestroyed()) petWin.webContents.send(kind, value);
+}
+
 function startInputHook() {
-  if (process.platform !== 'win32') return;
+  const forced = process.env.SUDARI_HOOK;
+  const usePowershell = forced ? forced === 'powershell' : process.platform === 'win32';
+  if (usePowershell) return startPowershellHook();
+  return startUiohook();
+}
+
+/** macOS 에서 접근성 권한이 있는지. prompt=true 면 시스템 설정으로 안내하는 대화상자가 뜬다. */
+function macAccessibilityTrusted(prompt) {
+  if (process.platform !== 'darwin') return true;
+  try { return systemPreferences.isTrustedAccessibilityClient(!!prompt); } catch (e) { return false; }
+}
+
+function startUiohook() {
+  if (process.platform === 'darwin' && !macAccessibilityTrusted(false)) {
+    hookState = 'no-permission';
+    console.log('[수다리] macOS 접근성 권한이 없어 키보드/스크롤 반응이 꺼져 있습니다. 트레이 메뉴에서 허용할 수 있어요.');
+    return;
+  }
+  let mod;
+  try {
+    mod = require('uiohook-napi');
+  } catch (e) {
+    hookState = 'failed';
+    console.error('[수다리] uiohook-napi 를 불러오지 못했습니다 — 키보드/스크롤 반응 없이 계속합니다:', e.message);
+    return;
+  }
+  try {
+    uiohook = mod.uIOhook;
+    let firstKey = true;
+    uiohook.on('keydown', () => {                 // 키 코드는 읽지 않는다
+      if (firstKey) { firstKey = false; console.log('[수다리] uiohook 첫 키 이벤트 수신'); }
+      sendInput('key');
+    });
+    uiohook.on('wheel', (e) => sendInput('wheel', Math.round((e.rotation || 1) * 120)));
+    uiohook.start();
+    hookState = 'uiohook';
+    console.log('[수다리] 전역 입력 후크 준비됨 (uiohook)');
+  } catch (e) {
+    hookState = 'failed';
+    uiohook = null;
+    console.error('[수다리] uiohook 시작 실패 — 키보드/스크롤 반응 없이 계속합니다:', e.message);
+  }
+}
+
+function startPowershellHook() {
   // 패키징되면 app.asar 안의 파일은 PowerShell이 읽을 수 없으므로 asarUnpack 된 실제 경로를 쓴다
   const script = path.join(__dirname, 'tools', 'input_hook.ps1').replace('app.asar', 'app.asar.unpacked');
   if (!fs.existsSync(script)) return;
@@ -194,9 +246,9 @@ function startInputHook() {
       const line = buf.slice(0, i).trim();
       buf = buf.slice(i + 1);
       if (!line || !petWin || petWin.isDestroyed()) continue;
-      if (line === 'K') petWin.webContents.send('key');
-      else if (line[0] === 'W') petWin.webContents.send('wheel', parseInt(line.slice(1), 10) || 120);
-      else if (line === 'READY') console.log('[수다리] 전역 입력 후크 준비됨');
+      if (line === 'K') sendInput('key');
+      else if (line[0] === 'W') sendInput('wheel', parseInt(line.slice(1), 10) || 120);
+      else if (line === 'READY') { hookState = 'powershell'; console.log('[수다리] 전역 입력 후크 준비됨 (PowerShell)'); }
     }
   });
   hookProc.stderr.on('data', (d) => console.error('[수다리] 후크:', d.toString().trim()));
@@ -293,6 +345,13 @@ function buildMenu() {
     },
     { label: '크기', submenu: scaleItems },
     { type: 'separator' },
+    ...(process.platform === 'darwin' && hookState !== 'uiohook' ? [{
+      label: '키보드·스크롤 반응 켜기 (접근성 권한 허용)…',
+      click: () => {
+        macAccessibilityTrusted(true);            // 시스템 설정 안내 대화상자
+        petCommand('say', '시스템 설정에서 Sudari 를 허용하고 앱을 다시 켜줘!');
+      }
+    }] : []),
     { label: '설정…', click: openSettings },
     {
       label: '사용법 / AI 연동 방법 보기',
@@ -308,7 +367,8 @@ function buildMenu() {
 }
 
 function createTray() {
-  const icon = path.join(__dirname, 'assets', 'tray.png');
+  // macOS 메뉴바는 22pt — 전용 아이콘(+@2x 자동 선택). 그 외는 32px.
+  const icon = path.join(__dirname, 'assets', process.platform === 'darwin' ? 'tray-mac.png' : 'tray.png');
   tray = new Tray(icon);
   tray.setToolTip('수다리 — 내 컴퓨터에 사는 픽셀 수달');
   tray.setContextMenu(buildMenu());
@@ -343,8 +403,11 @@ ipcMain.on('win:interactive', (_e, on) => {
 ipcMain.on('win:menu', () => {
   const menu = buildMenu();
   const pos = screen.getCursorScreenPoint();
-  if (tray) {
-    // 펫 창은 focusable:false 라 이 창이 소유한 팝업은 바깥을 클릭해도 닫히지 않는다.
+  if (process.platform === 'darwin') {
+    // macOS 의 NSMenu 는 비활성 창이 소유해도 바깥 클릭으로 정상 종료된다
+    if (petWin && !petWin.isDestroyed()) menu.popup({ window: petWin });
+  } else if (tray) {
+    // Windows: 펫 창은 focusable:false 라 이 창이 소유한 팝업은 바깥을 클릭해도 닫히지 않는다.
     // 트레이 소유로 띄우면 정상적으로 닫힌다 (position 은 Windows 전용 인자).
     tray.popUpContextMenu(menu, { x: pos.x, y: pos.y });
   } else if (petWin && !petWin.isDestroyed()) {
@@ -371,6 +434,7 @@ if (!app.requestSingleInstanceLock()) {
 
   app.whenReady().then(() => {
     loadConfig();
+    if (process.platform === 'darwin' && app.dock) app.dock.hide();   // 데스크톱 펫은 Dock 에 안 나온다
     createPetWindow();
     createTray();
     startCursorPolling();
@@ -387,6 +451,7 @@ if (!app.requestSingleInstanceLock()) {
   app.on('before-quit', () => {
     if (cursorTimer) clearInterval(cursorTimer);
     if (hookProc) { try { hookProc.kill(); } catch (e) { /* noop */ } }
+    if (uiohook) { try { uiohook.stop(); } catch (e) { /* noop */ } }
     if (agentServer) { try { agentServer.close(); } catch (e) { /* noop */ } }
   });
 }

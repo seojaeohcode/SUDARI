@@ -1,20 +1,25 @@
 {
   "name": "sudari",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "수다리 - 내 컴퓨터에 사는 픽셀 수달 (Sudari, a pixel otter that lives on your desktop)",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "sprites": "python tools/gen_sprites.py",
     "icon": "python tools/make_icon.py",
+    "docs": "python tools/make_docs.py",
     "pack": "electron-builder --win --dir",
-    "dist": "electron-builder --win --publish never"
+    "dist": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --x64 --arm64 --publish never"
   },
   "author": "seojaeohcode",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/seojaeohcode/SUDARI.git"
+  },
+  "dependencies": {
+    "uiohook-napi": "^1.5.5"
   },
   "devDependencies": {
     "electron": "^33.2.0",
@@ -23,6 +28,7 @@
   "build": {
     "appId": "kr.sudari.desktop-otter",
     "productName": "Sudari",
+    "npmRebuild": false,
     "directories": {
       "output": "dist",
       "buildResources": "build"
@@ -37,7 +43,8 @@
       "package.json"
     ],
     "asarUnpack": [
-      "tools/**"
+      "tools/**",
+      "node_modules/uiohook-napi/**"
     ],
     "extraResources": [
       "README.md"
@@ -58,6 +65,29 @@
     },
     "portable": {
       "artifactName": "Sudari-${version}-Portable.${ext}"
+    },
+    "mac": {
+      "icon": "build/icon.png",
+      "category": "public.app-category.entertainment",
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] },
+        { "target": "zip", "arch": ["x64", "arm64"] }
+      ],
+      "artifactName": "Sudari-${version}-mac-${arch}.${ext}",
+      "extendInfo": {
+        "LSUIElement": true,
+        "NSAppleEventsUsageDescription": "수달이 옆에서 반응하기 위해 필요합니다."
+      }
+    },
+    "dmg": {
+      "artifactName": "Sudari-${version}-mac-${arch}.${ext}",
+      "contents": [
+        { "x": 130, "y": 180 },
+        { "x": 410, "y": 180, "type": "link", "path": "/Applications" }
+      ]
     }
   }
 }

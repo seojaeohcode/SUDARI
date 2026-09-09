@@ -9,7 +9,7 @@ html, body {
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
-  font-family: "Galmuri11", "DungGeunMo", "Pretendard", "Malgun Gothic", sans-serif;
+  font-family: "Galmuri11", "DungGeunMo", "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
 }
 
 body.pet-window { pointer-events: none; }
