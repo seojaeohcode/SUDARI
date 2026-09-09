@@ -8,12 +8,11 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const { spawn } = require('child_process');
+const layout = require('./renderer/layout');
 
 // 펫 창은 포커스를 받지 않으므로, 소리를 내려면 자동재생 제한을 풀어야 한다.
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
-const WIN_W = 320;
-const WIN_H = 300;
 const AGENT_PORT = 37421;
 
 let petWin = null;
@@ -58,17 +57,20 @@ function loadConfig() {
     console.error('[수다리] 설정 파일을 읽지 못해 기본값으로 시작합니다:', e.message);
     config = Object.assign({}, DEFAULT_CONFIG);
   }
+  config.scale = layout.scale(config.scale);
   return config;
 }
 
 function saveConfig(next) {
   config = Object.assign({}, config, next);
+  config.scale = layout.scale(config.scale);
   try {
     fs.mkdirSync(path.dirname(CONFIG_PATH()), { recursive: true });
     fs.writeFileSync(CONFIG_PATH(), JSON.stringify(config, null, 2), 'utf8');
   } catch (e) {
     console.error('[수다리] 설정 저장 실패:', e.message);
   }
+  resizePetWindow();
   if (petWin && !petWin.isDestroyed()) petWin.webContents.send('config', config);
   if (settingsWin && !settingsWin.isDestroyed()) settingsWin.webContents.send('config', config);
   applyLaunchAtLogin();
@@ -84,12 +86,13 @@ function applyLaunchAtLogin() {
 // ------------------------------------------------------------------ 펫 창
 function createPetWindow() {
   const wa = screen.getPrimaryDisplay().workArea;
+  const { width, height } = layout.size(config.scale);
 
   petWin = new BrowserWindow({
-    width: WIN_W,
-    height: WIN_H,
-    x: wa.x + wa.width - WIN_W - 24,
-    y: wa.y + wa.height - WIN_H + 2,
+    width,
+    height,
+    x: wa.x + wa.width - width - 24,
+    y: wa.y + wa.height - height + 2,
     transparent: true,
     frame: false,
     resizable: false,
@@ -111,21 +114,35 @@ function createPetWindow() {
   });
 
   petWin.setAlwaysOnTop(true, 'screen-saver');
+  if (process.platform === 'darwin') {
+    petWin.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  }
   petWin.setIgnoreMouseEvents(true, { forward: true });
   petWin.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
   // 펫 창은 개발자도구를 열기 번거로우니 렌더러 오류를 터미널로 끌어온다
-  petWin.webContents.on('console-message', (_e, level, message, line, source) => {
-    if (level >= 2) console.error('[렌더러] ' + message + '  (' + source + ':' + line + ')');
+  petWin.webContents.on('console-message', (_e, details) => {
+    if (details.level === 'warning' || details.level === 'error') {
+      console.error('[렌더러] ' + details.message + '  (' + details.sourceId + ':' + details.lineNumber + ')');
+    }
   });
 
   petWin.webContents.on('did-finish-load', () => {
-    pushState();
+    resizePetWindow();
     petWin.webContents.send('config', config);
     maybeDebugShot();
   });
 
   petWin.on('closed', () => { petWin = null; });
+}
+
+function resizePetWindow() {
+  if (!petWin || petWin.isDestroyed()) return;
+  const previous = petWin.getBounds();
+  const area = screen.getDisplayMatching(previous).workArea;
+  const next = layout.bounds(previous, config.scale, area, config.peek);
+  if (Object.keys(next).some((key) => next[key] !== previous[key])) petWin.setBounds(next);
+  pushState();
 }
 
 /**
@@ -151,7 +168,7 @@ function maybeDebugShot() {
 function pushState() {
   if (!petWin || petWin.isDestroyed()) return;
   const b = petWin.getBounds();
-  const d = screen.getDisplayNearestPoint({ x: b.x + b.width / 2, y: b.y + b.height / 2 });
+  const d = screen.getDisplayMatching(b);
   petWin.webContents.send('state', { bounds: b, workArea: d.workArea });
 }
 
@@ -252,6 +269,10 @@ function startPowershellHook() {
     }
   });
   hookProc.stderr.on('data', (d) => console.error('[수다리] 후크:', d.toString().trim()));
+  hookProc.on('error', (e) => {
+    hookState = 'failed';
+    console.error('[수다리] 입력 후크 실행 실패:', e.message);
+  });
   hookProc.on('exit', (code) => {
     // code === null 은 종료 시 우리가 kill한 정상 경로
     if (code) console.error('[수다리] 입력 후크 종료(code ' + code + ') — 키보드/스크롤 반응 없이 계속합니다.');
@@ -391,7 +412,8 @@ ipcMain.on('config:save', (_e, c) => { saveConfig(c); refreshMenus(); });
 
 ipcMain.on('win:move', (_e, x, y) => {
   if (!petWin || petWin.isDestroyed()) return;
-  petWin.setBounds({ x: Math.round(x), y: Math.round(y), width: WIN_W, height: WIN_H });
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+  petWin.setBounds({ x: Math.round(x), y: Math.round(y), ...layout.size(config.scale) });
   pushState();
 });
 
@@ -442,7 +464,8 @@ if (!app.requestSingleInstanceLock()) {
     startAgentServer();
     applyLaunchAtLogin();
 
-    screen.on('display-metrics-changed', pushState);
+    screen.on('display-metrics-changed', resizePetWindow);
+    screen.on('display-removed', resizePetWindow);
     app.on('activate', () => { if (!petWin) createPetWindow(); });
   });
 

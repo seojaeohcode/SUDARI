@@ -1,0 +1,27 @@
+name: "🐚 Bug report / 버그 제보"
+description: "Help us find the wobbly shell. 어떤 문제가 있었나요?"
+body:
+  - type: input
+    id: environment
+    attributes:
+      label: "OS, CPU, Sudari version / 사용 환경"
+      placeholder: "Windows 11 x64 · Sudari 1.1.0 / macOS 15 M2"
+    validations:
+      required: true
+  - type: input
+    id: scale
+    attributes:
+      label: "Display scaling & otter size / 화면 배율과 수달 크기"
+      placeholder: "150%, 5×, two monitors"
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to reproduce / 재현 방법"
+      description: "What did you do, what happened, and what did you expect?"
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: "Screenshot or logs / 화면 또는 로그"
+      description: "Optional. Remove private text before attaching. 개인정보는 가려 주세요."

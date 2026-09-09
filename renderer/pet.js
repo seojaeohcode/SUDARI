@@ -197,7 +197,10 @@
     this.cfg = deepMerge(DEFAULTS, cfg || {});
     this.audio.volume = this.cfg.volume;
     this.audio.muted = !!this.cfg.muted;
-    this.scale = clamp(Math.round(this.cfg.scale), 1, 6);
+    this.scale = global.Sudari.layout.scale(this.cfg.scale);
+    this.cfg.scale = this.scale;
+    if (this.ui.timer) this.ui.timer.style.setProperty('--timer-scale', this.scale / 2);
+    if (this.bridge.resizePet) this.bridge.resizePet(this.scale);
 
     var colors = global.Sudari.derivePalette(this.cfg.baseColor);
     if (this.sprite) this.sprite.recolor(colors);
@@ -729,11 +732,14 @@
         c.y > box.y - m && c.y < box.y + box.h + m) return true;
     // 조개 타이머와 설정 패널도 클릭 대상
     var els = [this.ui.timer, this.ui.timerPanel];
+    var origin = this.canvas.getBoundingClientRect();
     for (var i = 0; i < els.length; i++) {
       var el = els[i];
       if (!el || !el.classList.contains('show')) continue;
       var r = el.getBoundingClientRect();
-      if (c.x >= r.left - 2 && c.x <= r.right + 2 && c.y >= r.top - 2 && c.y <= r.bottom + 2) return true;
+      var margin = this.scale;
+      if (c.x >= r.left - origin.left - margin && c.x <= r.right - origin.left + margin &&
+          c.y >= r.top - origin.top - margin && c.y <= r.bottom - origin.top + margin) return true;
     }
     return false;
   };
@@ -993,13 +999,17 @@
     // 말풍선·타이머·패널을 실제 머리 꼭대기 바로 위에 붙인다 (프레임 여백은 무시)
     var headTop = box.y + (head[1] - hR[1] - 1) * this.scale;
     var base = Math.round(this.vh - headTop);
-    var stack = base + 4;
+    var stack = base + 4 * this.scale;
     if (this.ui.timer) {
       this.ui.timer.style.bottom = stack + 'px';
-      if (this.ui.timer.classList.contains('show')) stack += this.ui.timer.offsetHeight + 12;
+      // offsetHeight excludes CSS transforms; stack using the actual scaled shell.
+      if (this.ui.timer.classList.contains('show')) stack += this.ui.timer.getBoundingClientRect().height + 6 * this.scale;
     }
-    if (this.ui.timerPanel) this.ui.timerPanel.style.bottom = (base + 6) + 'px';
-    if (this.ui.bubble) this.ui.bubble.style.bottom = (stack + 4) + 'px';
+    var topInset = this.ui.pin && this.cfg.pin ? this.ui.pin.offsetHeight + 14 : 12;
+    if (this.ui.timerPanel) this.ui.timerPanel.style.bottom = Math.max(8,
+      Math.min(base + 6, this.vh - this.ui.timerPanel.offsetHeight - topInset)) + 'px';
+    if (this.ui.bubble) this.ui.bubble.style.bottom = Math.max(8,
+      Math.min(stack + 4, this.vh - this.ui.bubble.offsetHeight - topInset)) + 'px';
   };
 
   Pet.prototype.start = function () {

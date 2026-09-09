@@ -1,0 +1,10 @@
+name: "🦦 Idea / 수다리에게 바라는 점"
+description: "A new reaction, a translation, or a little quality-of-life improvement."
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: "Your idea / 아이디어"
+      description: "Tell us what you want Sudari to do and when it would help. 한국어·English 모두 환영해요."
+    validations:
+      required: true

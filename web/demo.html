@@ -107,7 +107,14 @@
     <div id="petbox">
       <div id="pin" class="pin"></div>
       <div id="bubble" class="bubble"></div>
-      <div id="timer" class="timer"></div>
+      <div id="timer" class="timer"><div class="shell"></div></div>
+      <div id="timerpanel" class="tpanel">
+        <div class="tp-title">집중 타이머 🐚</div>
+        <div class="tp-row"><span>집중</span><button data-k="focusMin" data-d="-5">−</button><b id="tp-focus">25</b><i>분</i><button data-k="focusMin" data-d="5">+</button></div>
+        <div class="tp-row"><span>휴식</span><button data-k="breakMin" data-d="-1">−</button><b id="tp-break">5</b><i>분</i><button data-k="breakMin" data-d="1">+</button></div>
+        <div class="tp-row"><span>반복</span><button data-k="rounds" data-d="-1">−</button><b id="tp-rounds">4</b><i>회</i><button data-k="rounds" data-d="1">+</button></div>
+        <div class="tp-row tp-actions"><button id="tp-start" class="primary">▶ 시작</button><button id="tp-stop">■ 중단</button><button id="tp-close">닫기</button></div>
+      </div>
       <canvas id="pet" style="position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated"></canvas>
     </div>
   </div>
@@ -115,6 +122,7 @@
   <script src="../assets/atlas.js"></script>
   <script src="../renderer/sprite.js"></script>
   <script src="../renderer/audio.js"></script>
+  <script src="../renderer/layout.js"></script>
   <script src="../renderer/pet.js"></script>
   <script>
   /* 웹 데모용 브리지 — Electron 창 대신 페이지 안의 div를 움직인다. */
@@ -148,6 +156,15 @@
       cursorLocal: function () { return { x: cur.x - pos.x, y: cur.y - pos.y }; },
       petPos: function () { return pos; },
       movePet: function (x, y) { pos.x = x; pos.y = y; place(); },
+      resizePet: function (scale) {
+        var next = g.Sudari.layout.bounds({ x: pos.x, y: pos.y,
+          width: box.clientWidth, height: box.clientHeight }, scale,
+          this.workArea(), !!cfg.peek);
+        pos.x = next.x; pos.y = next.y;
+        box.style.width = next.width + 'px'; box.style.height = next.height + 'px';
+        place();
+        if (g.sudariPet) g.sudariPet.resize();
+      },
       workArea: function () { return { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }; },
       setInteractive: function () { /* 데모에서는 항상 상호작용 가능 */ },
       contextMenu: function () { h.command.forEach(function (f) { f('wave'); }); },
