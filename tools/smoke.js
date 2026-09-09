@@ -108,6 +108,19 @@ app.whenReady().then(async () => {
   assert.equal(await js('sudariPet.pomo'), null);
   assert.equal(await js(`sudariPet.ui.timer.classList.contains('show')`), false);
   assert.equal(await js(`getComputedStyle(sudariPet.ui.timer).pointerEvents`), 'none');
+  const stateChecks=await js(`(()=>{
+    const p=sudariPet, deadlines=[p.stretchAt,p.waterAt,p.affectionAt];
+    p.applyConfig({...p.cfg,name:'QA'});
+    const same=JSON.stringify(deadlines)===JSON.stringify([p.stretchAt,p.waterAt,p.affectionAt]);
+    const before=p.affectionAt;p.applyConfig(Sudari.Pet.deepMerge(p.cfg,{affection:{everyMin:6}}));
+    const intervalChanged=p.affectionAt!==before;
+    for(let i=0;i<12;i++)p.sprite.recolor(Sudari.derivePalette('#'+(0x445566+i*123).toString(16)));
+    const cacheSize=Object.keys(p.sprite._recolorCache).length;p.applyConfig({...p.cfg,name:''});
+    return {same,intervalChanged,cacheSize};
+  })()`);
+  assert.equal(stateChecks.same,true,'Unrelated settings retain reminder deadlines');
+  assert.equal(stateChecks.intervalChanged,true,'Changing a reminder interval takes effect immediately');
+  assert.ok(stateChecks.cacheSize<=8,'Color-picker memory stays bounded');
   // Every locale in native menu, timer and settings (including long translations and RTL).
   main.openSettings();
   const settings=await until(()=>BrowserWindow.getAllWindows().find(w=>w!==win));

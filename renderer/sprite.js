@@ -125,6 +125,9 @@
     x.putImageData(data, 0, 0);
     this.sheet = c;
     this.fur = colors.FUR || this.palette.FUR;
+    // A color-picker drag can produce hundreds of colors; retain only recent sheets.
+    var cached = Object.keys(this._recolorCache);
+    if (cached.length >= 8) delete this._recolorCache[cached[0]];
     this._recolorCache[key] = { sheet: c, fur: this.fur };
   };
 

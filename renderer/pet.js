@@ -174,6 +174,7 @@
 
   // ------------------------------------------------------------------ 설정
   Pet.prototype.applyConfig = function (cfg, initial) {
+    var previous = this.cfg;
     var prevPattern = this.cfg && this.cfg.pattern;
     var prevPeek = !!(this.cfg && this.cfg.peek);
     this.cfg = global.Sudari.preferences.normalize(cfg);
@@ -205,8 +206,12 @@
     if (this.ui.timerPanel) this._syncPanel();
     if (this.cfg.pomodoro.on && !this.pomo) this.startPomodoro();
     if (!this.cfg.pomodoro.on) { this.pomo = null; this._renderTimer(); }
-    this.stretchAt = this._minsFromNow(this.cfg.stretch.everyMin);
-    this.waterAt = this._minsFromNow(this.cfg.water.everyMin);
+    if (initial || !previous || previous.stretch.everyMin !== this.cfg.stretch.everyMin || previous.stretch.on !== this.cfg.stretch.on)
+      this.stretchAt = this._minsFromNow(this.cfg.stretch.everyMin);
+    if (initial || !previous || previous.water.everyMin !== this.cfg.water.everyMin || previous.water.on !== this.cfg.water.on)
+      this.waterAt = this._minsFromNow(this.cfg.water.everyMin);
+    if (initial || !previous || previous.affection.everyMin !== this.cfg.affection.everyMin || previous.affection.on !== this.cfg.affection.on)
+      this.affectionAt = this._minsFromNow(this.cfg.affection.everyMin);
   };
 
   // ------------------------------------------------------------------ 액션
